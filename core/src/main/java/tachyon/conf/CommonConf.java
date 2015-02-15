@@ -83,6 +83,8 @@ public class CommonConf extends Utils {
 
   public final int MASTER_RETRY_COUNT;
 
+  public final String METRICS_CONF_FILE;
+
   private CommonConf() {
     if (System.getProperty("tachyon.home") == null) {
       LOG.warn("tachyon.home is not set. Using {} as the default value.", DEFAULT_HOME);
@@ -129,6 +131,8 @@ public class CommonConf extends Utils {
 
     // use 29 as default since current exponential logic overflows int
     MASTER_RETRY_COUNT = getIntProperty("tachyon.master.retry", 29);
+
+    METRICS_CONF_FILE = getProperty("tachyon.metrics.conf", null);
   }
 
   public static void assertValidPort(final int port) {

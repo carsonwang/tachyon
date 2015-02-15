@@ -38,6 +38,7 @@ import tachyon.UnderFileSystemHdfs;
 import tachyon.Version;
 import tachyon.conf.CommonConf;
 import tachyon.conf.MasterConf;
+import tachyon.metrics.MetricsSystem;
 import tachyon.thrift.MasterService;
 import tachyon.util.CommonUtils;
 import tachyon.util.NetworkUtils;
@@ -70,6 +71,7 @@ public class TachyonMaster {
   private TNonblockingServerSocket mServerTNonblockingServerSocket;
   private TServer mMasterServiceServer;
   private MasterServiceHandler mMasterServiceHandler;
+  private MetricsSystem mMasterMetricSystem;
   private Journal mJournal;
   private EditLogProcessor mEditLogProcessor;
   private int mWebPort;
@@ -116,6 +118,8 @@ public class TachyonMaster {
           "Tachyon was not formatted! The journal folder is " + journalFolder);
       mJournal = new Journal(journalFolder, "image.data", "log.data");
       mMasterInfo = new MasterInfo(mMasterAddress, mJournal, mExecutorService);
+
+      mMasterMetricSystem = new MetricsSystem("master");
 
       if (mZookeeperMode) {
         CommonConf conf = CommonConf.get();
@@ -247,6 +251,8 @@ public class TachyonMaster {
               LOG.error(e.getMessage(), e);
               throw Throwables.propagate(e);
             }
+            mMasterMetricSystem.registerSource(mMasterInfo.getMasterSource());
+            mMasterMetricSystem.start();
             mWebServer.startWebServer();
             LOG.info("The master (leader) server started @ " + mMasterAddress);
             mMasterServiceServer.serve();
@@ -273,6 +279,8 @@ public class TachyonMaster {
         throw Throwables.propagate(e);
       }
 
+      mMasterMetricSystem.registerSource(mMasterInfo.getMasterSource());
+      mMasterMetricSystem.start();
       mWebServer.startWebServer();
       LOG.info("Tachyon Master version " + Version.VERSION + " started @ " + mMasterAddress);
       mMasterServiceServer.serve();
@@ -284,6 +292,7 @@ public class TachyonMaster {
     if (mIsStarted) {
       mWebServer.shutdownWebServer();
       mMasterInfo.stop();
+      mMasterMetricSystem.stop();
       mMasterServiceServer.stop();
       mServerTNonblockingServerSocket.close();
       mExecutorService.shutdown();

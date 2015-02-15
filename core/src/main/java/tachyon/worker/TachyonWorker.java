@@ -37,6 +37,7 @@ import tachyon.Users;
 import tachyon.Version;
 import tachyon.conf.CommonConf;
 import tachyon.conf.WorkerConf;
+import tachyon.metrics.MetricsSystem;
 import tachyon.thrift.Command;
 import tachyon.thrift.NetAddress;
 import tachyon.thrift.WorkerService;
@@ -143,6 +144,8 @@ public class TachyonWorker implements Runnable {
 
   private final WorkerServiceHandler mWorkerServiceHandler;
 
+  private final MetricsSystem mWorkerMetricSystem;
+
   private final DataServer mDataServer;
 
   private final Thread mHeartbeatThread;
@@ -204,6 +207,9 @@ public class TachyonWorker implements Runnable {
     mWorkerAddress =
         new NetAddress(workerAddress.getAddress().getCanonicalHostName(), mPort, mDataPort);
     mWorkerStorage.initialize(mWorkerAddress);
+
+    mWorkerMetricSystem = new MetricsSystem("worker");
+    mWorkerMetricSystem.registerSource(new WorkerSource(mWorkerStorage));
   }
 
   private DataServer createDataServer(final InetSocketAddress dataAddress,
@@ -316,6 +322,7 @@ public class TachyonWorker implements Runnable {
     login();
 
     mHeartbeatThread.start();
+    mWorkerMetricSystem.start();
 
     LOG.info("The worker server started @ " + mWorkerAddress);
     mServer.serve();
@@ -331,6 +338,7 @@ public class TachyonWorker implements Runnable {
   public void stop() throws IOException, InterruptedException {
     mStop = true;
     mWorkerStorage.stop();
+    mWorkerMetricSystem.stop();
     mDataServer.close();
     mServer.stop();
     mServerTNonblockingServerSocket.close();

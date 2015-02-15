@@ -575,6 +575,10 @@ public class WorkerStorage {
     }
   }
 
+  public long getCapacityBytes() {
+    return mCapacityBytes;
+  }
+
   /**
    * Get StorageDir which contains specified block
    * 
@@ -604,7 +608,7 @@ public class WorkerStorage {
    * 
    * @return used bytes of current WorkerStorage
    */
-  private long getUsedBytes() {
+  public long getUsedBytes() {
     long usedBytes = 0;
     for (StorageTier curTier : mStorageTiers) {
       usedBytes += curTier.getUsedBytes();
