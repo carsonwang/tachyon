@@ -15,6 +15,7 @@
 
 package tachyon.worker;
 
+import com.codahale.metrics.Counter;
 import com.codahale.metrics.Gauge;
 import com.codahale.metrics.MetricRegistry;
 
@@ -22,10 +23,13 @@ import tachyon.metrics.source.Source;
 
 
 public class WorkerSource implements Source {
-  private MetricRegistry mMetricRegistry;
+  private MetricRegistry mMetricRegistry = new MetricRegistry();
+  private final Counter mBlocksRemoved = mMetricRegistry.counter(MetricRegistry
+          .name("BlocksRemoved"));
+  private final Counter mBlocksAccessed = mMetricRegistry.counter(MetricRegistry
+          .name("BlocksAccessed"));
 
   public WorkerSource(final WorkerStorage workerStorage) {
-    mMetricRegistry = new MetricRegistry();
     mMetricRegistry.register(MetricRegistry.name("CapacityTotalGB"), new Gauge<Long>() {
       @Override
       public Long getValue() {
@@ -46,6 +50,13 @@ public class WorkerSource implements Source {
         return workerStorage.getCapacityBytes() - workerStorage.getUsedBytes();
       }
     });
+
+    mMetricRegistry.register(MetricRegistry.name("BlocksCached"), new Gauge<Integer>() {
+      @Override
+      public Integer getValue() {
+        return workerStorage.getNumberOfBlocks();
+      }
+    });
   }
 
   @Override
@@ -56,5 +67,14 @@ public class WorkerSource implements Source {
   @Override
   public MetricRegistry getMetricRegistry() {
     return mMetricRegistry;
+  }
+
+
+  public void incBlocksRemoved() {
+    mBlocksRemoved.inc();
+  }
+
+  public void incBlocksAccessed() {
+    mBlocksAccessed.inc();
   }
 }

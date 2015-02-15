@@ -209,7 +209,7 @@ public class TachyonWorker implements Runnable {
     mWorkerStorage.initialize(mWorkerAddress);
 
     mWorkerMetricSystem = new MetricsSystem("worker");
-    mWorkerMetricSystem.registerSource(new WorkerSource(mWorkerStorage));
+    mWorkerMetricSystem.registerSource(mWorkerStorage.getWorkerSource());
   }
 
   private DataServer createDataServer(final InetSocketAddress dataAddress,

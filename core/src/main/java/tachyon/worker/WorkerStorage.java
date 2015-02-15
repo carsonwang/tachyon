@@ -268,6 +268,7 @@ public class WorkerStorage {
   private volatile MasterClient mMasterClient;
   private final InetSocketAddress mMasterAddress;
   private NetAddress mWorkerAddress;
+  private final WorkerSource mWorkerSource;
 
   private long mWorkerId;
 
@@ -322,6 +323,8 @@ public class WorkerStorage {
 
     mDataFolder = WorkerConf.get().DATA_FOLDER;
     mUserFolder = CommonUtils.concat(mDataFolder, WorkerConf.USER_TEMP_RELATIVE_FOLDER);
+
+    mWorkerSource = new WorkerSource(this);
   }
 
   public void initialize(final NetAddress address) {
@@ -575,8 +578,26 @@ public class WorkerStorage {
     }
   }
 
+  /**
+   * Get the total capacity in bytes
+   *
+   * @return the capacity in bytes
+   */
   public long getCapacityBytes() {
     return mCapacityBytes;
+  }
+
+  /**
+   * Get the total number of blocks
+   *
+   * @return the number of blocks
+   */
+  public int getNumberOfBlocks() {
+    int ret = 0;
+    for (StorageTier tier : mStorageTiers) {
+      ret += tier.getNumberOfBlocks();
+    }
+    return ret;
   }
 
   /**
@@ -637,6 +658,15 @@ public class WorkerStorage {
   }
 
   /**
+   * Get the WorkerSource instance
+   *
+   * @return the WorkerSource instance
+   */
+  public WorkerSource getWorkerSource() {
+    return mWorkerSource;
+  }
+
+  /**
    * Heartbeat with the TachyonMaster. Send the removed block list and added block list to the
    * Master.
    * 
@@ -692,7 +722,7 @@ public class WorkerStorage {
       }
       StorageTier curTier =
           new StorageTier(level, alias, dirPaths, dirCapacities, mDataFolder, mUserFolder,
-              nextStorageTier, null); // TODO add conf for UFS
+              nextStorageTier, null, mWorkerSource); // TODO add conf for UFS
       curTier.initialize();
       mCapacityBytes += curTier.getCapacityBytes();
       mStorageTiers.set(level, curTier);

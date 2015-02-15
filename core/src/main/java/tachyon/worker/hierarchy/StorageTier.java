@@ -29,6 +29,7 @@ import tachyon.StorageLevelAlias;
 import tachyon.Users;
 import tachyon.conf.UserConf;
 import tachyon.conf.WorkerConf;
+import tachyon.worker.WorkerSource;
 import tachyon.worker.allocation.AllocateStrategies;
 import tachyon.worker.allocation.AllocateStrategy;
 import tachyon.worker.eviction.EvictStrategies;
@@ -74,7 +75,7 @@ public class StorageTier {
    */
   public StorageTier(int storageLevel, StorageLevelAlias storageLevelAlias, String[] dirPaths,
       long[] dirCapacityBytes, String dataFolder, String userTempFolder, StorageTier nextTier,
-      Object conf) throws IOException {
+      Object conf, WorkerSource workerSource) throws IOException {
     mLevel = storageLevel;
     mAlias = storageLevelAlias;
     mDirs = new StorageDir[dirPaths.length];
@@ -83,7 +84,7 @@ public class StorageTier {
       long storageDirId = StorageDirId.getStorageDirId(storageLevel, mAlias.getValue(), i);
       mDirs[i] =
           new StorageDir(storageDirId, dirPaths[i], dirCapacityBytes[i], dataFolder,
-              userTempFolder, conf);
+              userTempFolder, conf, workerSource);
       quotaBytes += dirCapacityBytes[i];
     }
     mCapacityBytes = quotaBytes;
@@ -120,6 +121,19 @@ public class StorageTier {
    */
   public StorageTier getNextStorageTier() {
     return mNextTier;
+  }
+
+  /**
+   * Get the number of blocks in this StorageTier
+   *
+   * @return the number of blocks in this StorageTier
+   */
+  public int getNumberOfBlocks() {
+    int ret = 0;
+    for (StorageDir dir : mDirs) {
+      ret += dir.getNumberOfBlocks();
+    }
+    return ret;
   }
 
   /**

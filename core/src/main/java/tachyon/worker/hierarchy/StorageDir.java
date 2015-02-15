@@ -45,6 +45,7 @@ import tachyon.Users;
 import tachyon.util.CommonUtils;
 import tachyon.worker.BlockHandler;
 import tachyon.worker.SpaceCounter;
+import tachyon.worker.WorkerSource;
 
 /**
  * Stores and manages block files in storage's directory in different storage systems.
@@ -86,6 +87,7 @@ public final class StorageDir {
   /** Mapping from block Id to list of users that lock the block */
   private final Multimap<Long, Long> mUserPerLockedBlock = Multimaps
       .synchronizedMultimap(HashMultimap.<Long, Long>create());
+  private final WorkerSource mWorkerSource;
 
   /**
    * Create a new StorageDir.
@@ -98,7 +100,7 @@ public final class StorageDir {
    * @param conf the configuration of the under file system
    */
   StorageDir(long storageDirId, String dirPath, long capacityBytes, String dataFolder,
-      String userTempFolder, Object conf) {
+      String userTempFolder, Object conf, WorkerSource workerSource) {
     mStorageDirId = storageDirId;
     mDirPath = new TachyonURI(dirPath);
     mSpaceCounter = new SpaceCounter(capacityBytes);
@@ -106,6 +108,7 @@ public final class StorageDir {
     mUserTempPath = mDirPath.join(userTempFolder);
     mConf = conf;
     mFs = UnderFileSystem.get(dirPath, conf);
+    mWorkerSource = workerSource;
   }
 
   /**
@@ -117,6 +120,7 @@ public final class StorageDir {
     synchronized (mLastBlockAccessTimeMs) {
       if (containsBlock(blockId)) {
         mLastBlockAccessTimeMs.put(blockId, System.currentTimeMillis());
+        mWorkerSource.incBlocksAccessed();
       }
     }
   }
@@ -299,6 +303,7 @@ public final class StorageDir {
       mToRemoveBlockIdSet.add(blockId);
       LOG.debug("Add block file {} to remove list!", blockfile);
     }
+    mWorkerSource.incBlocksRemoved();
     return true;
   }
 
@@ -466,6 +471,15 @@ public final class StorageDir {
       }
     }
     return lockedBytes;
+  }
+
+  /**
+   * Get the number of blocks in this StorageDir
+   *
+   * @return the number of blocks in this StorageDir
+   */
+  public int getNumberOfBlocks() {
+    return mBlockSizes.size();
   }
 
   /**
