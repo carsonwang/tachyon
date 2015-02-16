@@ -25,6 +25,7 @@ import org.junit.Test;
 import tachyon.TestUtils;
 import tachyon.UnderFileSystem;
 import tachyon.worker.BlockHandler;
+import tachyon.worker.WorkerSource;
 import tachyon.worker.allocation.AllocateStrategies;
 import tachyon.worker.allocation.AllocateStrategy;
 import tachyon.worker.allocation.AllocateStrategyType;
@@ -45,7 +46,7 @@ public class AllocateStrategyTest {
     for (int i = 0; i < 3; i++) {
       mStorageDirs[i] =
           new StorageDir(i + 1, workerDirFolder + dirPaths[i], CAPACITIES[i], "/data", "/user",
-              null);
+              null, new WorkerSource(null));
       initializeStorageDir(mStorageDirs[i], USER_ID);
     }
   }

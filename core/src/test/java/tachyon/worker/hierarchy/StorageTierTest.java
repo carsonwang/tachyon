@@ -34,6 +34,7 @@ import tachyon.conf.WorkerConf;
 import tachyon.thrift.InvalidPathException;
 import tachyon.util.CommonUtils;
 import tachyon.worker.BlockHandler;
+import tachyon.worker.WorkerSource;
 
 public class StorageTierTest {
 
@@ -88,7 +89,7 @@ public class StorageTierTest {
       }
       StorageTier curTier =
           new StorageTier(level, storageLevelAlias, dirPaths, dirCapacities, "/data", "/user",
-              nextTier, null);
+              nextTier, null, new WorkerSource(null));
       mStorageTiers[level] = curTier;
       curTier.initialize();
       for (StorageDir dir : curTier.getStorageDirs()) {

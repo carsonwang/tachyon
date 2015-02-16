@@ -19,9 +19,15 @@ import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.jvm.GarbageCollectorMetricSet;
 import com.codahale.metrics.jvm.MemoryUsageGaugeSet;
 
+/**
+ * A Source which collects JVM metrics, including JVM memory usage, GC counts, GC times, etc.
+ */
 public class JvmSource implements Source {
   private MetricRegistry mMetricRegistry;
 
+  /**
+   * Creates a JVMSource and register all JVM metrics.
+   */
   public JvmSource() {
     mMetricRegistry = new MetricRegistry();
     mMetricRegistry.registerAll(new GarbageCollectorMetricSet());

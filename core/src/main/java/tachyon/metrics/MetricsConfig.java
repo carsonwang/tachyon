@@ -28,6 +28,9 @@ import org.slf4j.LoggerFactory;
 
 import tachyon.Constants;
 
+/**
+ * Configurations used by the metrics system.
+ */
 public final class MetricsConfig {
   private static final Logger LOG = LoggerFactory.getLogger(Constants.LOGGER_TYPE);
 
@@ -53,6 +56,12 @@ public final class MetricsConfig {
     }
   }
 
+  /**
+   * Get an instance's properties.
+   *
+   * @param inst the instance name, "master" or "worker".
+   * @return the properties.
+   */
   public Properties getInstance(String inst) {
     Properties prop = mPropertyCategories.get(inst);
     if (prop == null) {
@@ -64,6 +73,18 @@ public final class MetricsConfig {
     return prop;
   }
 
+  /**
+   * Get the propertyCategories, used by unit tests only.
+   *
+   * @return a Map that maps from instance name to its properties.
+   */
+  public Map<String, Properties> getPropertyCategories() {
+    return  mPropertyCategories;
+  }
+
+  /**
+   * Loads and parses the metrics configuration file.
+   */
   public void initialize() {
     InputStream is = null;
     try {
@@ -87,6 +108,7 @@ public final class MetricsConfig {
       }
     }
 
+    // Parses the configuration and maps the instance name to its properties.
     mPropertyCategories = subProperties(mProperties, INSTANCE_REGEX);
     if (mPropertyCategories.containsKey(DEFAULT_PREFIX)) {
       Properties defaultProperties = mPropertyCategories.get(DEFAULT_PREFIX);
@@ -98,6 +120,14 @@ public final class MetricsConfig {
     }
   }
 
+  /**
+   * Uses regex to parse every original property key to a prefix and a suffix. Creates sub
+   * properties that are grouped by the prefix.
+   *
+   * @param prop the original properties.
+   * @param regex specifies the prefix and suffix pattern.
+   * @return a Map maps from the prefix and its properties.
+   */
   public Map<String, Properties> subProperties(Properties prop, String regex) {
     Map<String, Properties> subProperties = new HashMap<String, Properties>();
     Pattern pattern = Pattern.compile(regex);

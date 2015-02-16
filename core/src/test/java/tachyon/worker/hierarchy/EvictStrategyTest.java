@@ -31,6 +31,7 @@ import tachyon.UnderFileSystem;
 import tachyon.master.BlockInfo;
 import tachyon.util.CommonUtils;
 import tachyon.worker.BlockHandler;
+import tachyon.worker.WorkerSource;
 import tachyon.worker.eviction.EvictLRU;
 import tachyon.worker.eviction.EvictPartialLRU;
 import tachyon.worker.eviction.EvictStrategy;
@@ -48,7 +49,8 @@ public class EvictStrategyTest {
     String[] dirPaths = "/dir1,/dir2,/dir3".split(",");
     for (int i = 0; i < 3; i++) {
       mStorageDirs[i] =
-          new StorageDir(i + 1, workerDirFolder + dirPaths[i], CAPACITY, "/data", "/user", null);
+          new StorageDir(i + 1, workerDirFolder + dirPaths[i], CAPACITY, "/data", "/user", null,
+              new WorkerSource(null));
       initializeStorageDir(mStorageDirs[i], USER_ID);
     }
   }

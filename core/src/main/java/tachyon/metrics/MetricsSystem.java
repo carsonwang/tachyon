@@ -31,12 +31,18 @@ import tachyon.conf.CommonConf;
 import tachyon.metrics.sink.Sink;
 import tachyon.metrics.source.Source;
 
-
+/**
+ * A MetricsSystem is created by a specific instance(master, worker). It polls the metrics sources
+ * periodically and pass the data to the sinks.
+ *
+ * The syntax of the metrics configuration file is:
+ * [instance].[sink|source].[name].[options]=[value]
+ */
 public class MetricsSystem {
   private static final Logger LOG = LoggerFactory.getLogger(Constants.LOGGER_TYPE);
 
-  private static final String SINK_REGEX = "^sink\\.(.+)\\.(.+)";
-  private static final String SOURCE_REGEX = "^source\\.(.+)\\.(.+)";
+  public static final String SINK_REGEX = "^sink\\.(.+)\\.(.+)";
+  public static final String SOURCE_REGEX = "^source\\.(.+)\\.(.+)";
   private static final TimeUnit MINIMAL_POLL_UNIT = TimeUnit.SECONDS;
   private static final int MINIMAL_POLL_PERIOD = 1;
 
@@ -47,6 +53,13 @@ public class MetricsSystem {
   private MetricsConfig mMetricsConfig;
   private boolean mRunning = false;
 
+  /**
+   * Check if the poll period is smaller that the minimal poll period which is 1 second.
+   *
+   * @param pollUnit the polling unit.
+   * @param pollPeriod the polling period.
+   * @throws IllegalArgumentException
+   */
   public static void checkMinimalPollingPeriod(TimeUnit pollUnit, int pollPeriod)
       throws IllegalArgumentException {
     int period = (int) MINIMAL_POLL_UNIT.convert(pollPeriod, pollUnit);
@@ -56,12 +69,40 @@ public class MetricsSystem {
     }
   }
 
+  /**
+   * Creates a MetricsSystem and initialize the configuration.
+   *
+   * @param instance the instance name.
+   */
   public MetricsSystem(String instance) {
     mInstance = instance;
     mMetricsConfig = new MetricsConfig(CommonConf.get().METRICS_CONF_FILE);
     mMetricsConfig.initialize();
   }
 
+  /**
+   * Gets the sinks. Used by unit tests only.
+   *
+   * @return A list of registered Sinks.
+   */
+  public List<Sink> getSinks() {
+    return mSinks;
+  }
+
+  /**
+   *  Gets the sources. Used by unit tests only.
+   *
+   * @return A list of registered Sources.
+   */
+  public List<Source> getSources() {
+    return mSources;
+  }
+
+  /**
+   * Register a Source.
+   *
+   * @param source the source to register.
+   */
   public void registerSource(Source source) {
     mSources.add(source);
     try {
@@ -71,6 +112,9 @@ public class MetricsSystem {
     }
   }
 
+  /**
+   * Register all the sources configured in the metrics config file.
+   */
   private void registerSources() {
     Properties instConfig = mMetricsConfig.getInstance(mInstance);
     Map<String, Properties> sourceConfigs = mMetricsConfig.subProperties(instConfig, SOURCE_REGEX);
@@ -87,6 +131,9 @@ public class MetricsSystem {
     }
   }
 
+  /**
+   * Register all the sinks configured in the metrics config file.
+   */
   private void registerSinks() {
     Properties instConfig = mMetricsConfig.getInstance(mInstance);
     Map<String, Properties> sinkConfigs = mMetricsConfig.subProperties(instConfig, SINK_REGEX);
@@ -106,17 +153,28 @@ public class MetricsSystem {
     }
   }
 
+  /**
+   * Remove a Source.
+   *
+   * @param source the source to remove.
+   */
   public void removeSource(Source source) {
     mSources.remove(source);
     mMetricRegistry.remove(source.getName());
   }
 
+  /**
+   * Reports metrics values to all sinks.
+   */
   public void report() {
     for (Sink sink : mSinks) {
       sink.report();
     }
   }
 
+  /**
+   * Starts the metrics system.
+   */
   public void start() {
     if (!mRunning) {
       registerSources();
@@ -130,6 +188,9 @@ public class MetricsSystem {
     }
   }
 
+  /**
+   * Stops the metrics system.
+   */
   public void stop() {
     if (mRunning) {
       for (Sink sink : mSinks) {

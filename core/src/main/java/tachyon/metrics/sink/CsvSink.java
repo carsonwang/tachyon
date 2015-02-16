@@ -25,6 +25,9 @@ import com.codahale.metrics.MetricRegistry;
 
 import tachyon.metrics.MetricsSystem;
 
+/**
+ * A sink which creates a CSV file of the metric values.
+ */
 public class CsvSink implements Sink {
   private static final int CSV_DEFAULT_PERIOD = 10;
   private static final String CSV_DEFAULT_UNIT = "SECONDS";
@@ -37,6 +40,13 @@ public class CsvSink implements Sink {
   private CsvReporter mReporter;
   private Properties mProperties;
 
+  /**
+   * Creates a CsvSink with a Properties and MetricRegistry.
+   *
+   * @param properties the properties which may contain polling period, unit and  directory
+   *                   properties.
+   * @param registry the metric registry to register.
+   */
   public CsvSink(Properties properties, MetricRegistry registry) {
     mProperties = properties;
     mReporter =
@@ -46,22 +56,40 @@ public class CsvSink implements Sink {
     MetricsSystem.checkMinimalPollingPeriod(getPollUnit(), getPollPeriod());
   }
 
+  /**
+   * Gets the directory where the CSV files are created.
+   *
+   * @return the polling directory set by properties. If it is not set, a default value /tmp/ is
+   *         returned.
+   */
   public String getPollDir() {
     String pollDir = mProperties.getProperty(CSV_KEY_DIR);
     return pollDir != null ? pollDir : CSV_DEFAULT_DIR;
   }
 
+  /**
+   * Gets the polling period.
+   *
+   * @return the polling period set by properties. If it is not set, a default value 10 is
+   *         returned.
+   */
   public int getPollPeriod() {
     String period = mProperties.getProperty(CSV_KEY_PERIOD);
     return period != null ? Integer.parseInt(period) : CSV_DEFAULT_PERIOD;
   }
 
+  /**
+   * Gets the polling time unit.
+   *
+   * @return the polling time unit set by properties, If it is not set, a default value SECONDS is
+   *         returned.
+   */
   public TimeUnit getPollUnit() {
     String unit = mProperties.getProperty(CSV_KEY_UNIT);
     if (unit == null) {
       unit = CSV_DEFAULT_UNIT;
     }
-    return TimeUnit.valueOf(unit);
+    return TimeUnit.valueOf(unit.toUpperCase());
   }
 
   @Override

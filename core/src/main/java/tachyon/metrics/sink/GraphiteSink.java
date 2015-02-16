@@ -24,6 +24,9 @@ import com.codahale.metrics.graphite.GraphiteReporter;
 
 import tachyon.metrics.MetricsSystem;
 
+/**
+ * A sink which publishes metric values to a Graphite server.
+ */
 public class GraphiteSink implements Sink {
   private static final int GRAPHITE_DEFAULT_PERIOD = 10;
   private static final String GRAPHITE_DEFAULT_UNIT = "SECONDS";
@@ -38,6 +41,12 @@ public class GraphiteSink implements Sink {
   private GraphiteReporter mReporter;
   private Properties mProperties;
 
+  /**
+   * Creates a GraphiteSink with a Properties and MetricRegistry.
+   *
+   * @param properties the properties which may contain polling period and unit properties.
+   * @param registry the metric registry to register.
+   */
   public GraphiteSink(Properties properties, MetricRegistry registry)
       throws IllegalArgumentException {
     mProperties = properties;
@@ -57,17 +66,29 @@ public class GraphiteSink implements Sink {
     MetricsSystem.checkMinimalPollingPeriod(getPollUnit(), getPollPeriod());
   }
 
+  /**
+   * Gets the polling period.
+   *
+   * @return the polling period set by properties. If it is not set, a default value 10 is
+   *         returned.
+   */
   public int getPollPeriod() {
     String period = mProperties.getProperty(GRAPHITE_KEY_PERIOD);
     return period != null ? Integer.parseInt(period) : GRAPHITE_DEFAULT_PERIOD;
   }
 
+  /**
+   * Gets the polling time unit.
+   *
+   * @return the polling time unit set by properties, If it is not set, a default value SECONDS is
+   *         returned.
+   */
   public TimeUnit getPollUnit() {
     String unit = mProperties.getProperty(GRAPHITE_KEY_UNIT);
     if (unit == null) {
       unit = GRAPHITE_DEFAULT_UNIT;
     }
-    return TimeUnit.valueOf(unit);
+    return TimeUnit.valueOf(unit.toUpperCase());
   }
 
   @Override

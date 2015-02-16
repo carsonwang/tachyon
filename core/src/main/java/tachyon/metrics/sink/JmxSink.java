@@ -20,10 +20,19 @@ import java.util.Properties;
 import com.codahale.metrics.JmxReporter;
 import com.codahale.metrics.MetricRegistry;
 
+/**
+ * A sink which listens for new metrics and exposes them as namespaces MBeans.
+ */
 public class JmxSink implements Sink {
   private JmxReporter mReporter;
   private Properties mProperties;
 
+  /**
+   * Creates a JmxSink with a Properties and MetricRegistry.
+   *
+   * @param properties the properties.
+   * @param registry the metric registry to register.
+   */
   public JmxSink(Properties properties, MetricRegistry registry) {
     mProperties = properties;
     mReporter = JmxReporter.forRegistry(registry).build();
