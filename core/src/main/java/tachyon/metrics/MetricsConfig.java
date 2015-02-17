@@ -126,7 +126,7 @@ public final class MetricsConfig {
    *
    * @param prop the original properties.
    * @param regex specifies the prefix and suffix pattern.
-   * @return a Map maps from the prefix and its properties.
+   * @return a Map maps from the prefix to its properties.
    */
   public Map<String, Properties> subProperties(Properties prop, String regex) {
     Map<String, Properties> subProperties = new HashMap<String, Properties>();

@@ -27,6 +27,9 @@ import com.codahale.metrics.MetricRegistry;
 import tachyon.Constants;
 import tachyon.metrics.source.Source;
 
+/**
+ * A MasterSource collects a Master's internal state.
+ */
 public class MasterSource implements Source {
   private static final Logger LOG = LoggerFactory.getLogger(Constants.LOGGER_TYPE);
   private MetricRegistry mMetricRegistry = new MetricRegistry();

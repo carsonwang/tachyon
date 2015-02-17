@@ -21,7 +21,9 @@ import com.codahale.metrics.MetricRegistry;
 
 import tachyon.metrics.source.Source;
 
-
+/**
+ * A WorkerSource collects a Worker's internal state.
+ */
 public class WorkerSource implements Source {
   private MetricRegistry mMetricRegistry = new MetricRegistry();
   private final Counter mBlocksRemoved = mMetricRegistry.counter(MetricRegistry

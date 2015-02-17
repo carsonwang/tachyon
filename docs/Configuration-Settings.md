@@ -113,6 +113,11 @@ The common configuration contains constants which specify paths and the log appe
   <td>29</td>
   <td>How many times to try to reconnect with master.</td>
 </tr>
+<tr>
+  <td>tachyon.metrics.conf</td>
+  <td>null</td>
+  <td>The file path of the metrics system configuration file.</td>
+</tr>
 </table>
 
 # Master Configuration
