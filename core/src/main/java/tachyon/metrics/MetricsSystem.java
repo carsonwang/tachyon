@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
 import com.codahale.metrics.MetricRegistry;
 
 import tachyon.Constants;
-import tachyon.conf.CommonConf;
+import tachyon.conf.TachyonConf;
 import tachyon.metrics.sink.Sink;
 import tachyon.metrics.source.Source;
 
@@ -52,6 +52,7 @@ public class MetricsSystem {
   private MetricRegistry mMetricRegistry = new MetricRegistry();
   private MetricsConfig mMetricsConfig;
   private boolean mRunning = false;
+  private TachyonConf mTachyonConf;
 
   /**
    * Check if the poll period is smaller that the minimal poll period which is 1 second.
@@ -74,9 +75,10 @@ public class MetricsSystem {
    *
    * @param instance the instance name.
    */
-  public MetricsSystem(String instance) {
+  public MetricsSystem(String instance, TachyonConf tachyonConf) {
     mInstance = instance;
-    mMetricsConfig = new MetricsConfig(CommonConf.get().METRICS_CONF_FILE);
+    mTachyonConf = tachyonConf;
+    mMetricsConfig = new MetricsConfig(mTachyonConf.get(Constants.METRICS_CONF_FILE, null));
     mMetricsConfig.initialize();
   }
 
