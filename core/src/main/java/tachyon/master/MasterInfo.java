@@ -375,6 +375,7 @@ public class MasterInfo extends ImageWriter {
       if (needLog) {
         tFile.setLastModificationTimeMs(opTimeMs);
       }
+      mMasterSource.incFilesCheckpointed();
       return new Pair<Boolean, Boolean>(true, needLog);
     }
   }

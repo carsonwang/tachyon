@@ -26,10 +26,16 @@ import tachyon.metrics.source.Source;
  */
 public class WorkerSource implements Source {
   private MetricRegistry mMetricRegistry = new MetricRegistry();
-  private final Counter mBlocksRemoved = mMetricRegistry.counter(MetricRegistry
-          .name("BlocksRemoved"));
   private final Counter mBlocksAccessed = mMetricRegistry.counter(MetricRegistry
           .name("BlocksAccessed"));
+  private final Counter mBlocksCanceled = mMetricRegistry.counter(MetricRegistry
+          .name("BlocksCanceled"));
+  private final Counter mBlocksDeleted = mMetricRegistry.counter(MetricRegistry
+          .name("BlocksDeleted"));
+  private final Counter mBlocksEvicted = mMetricRegistry.counter(MetricRegistry
+          .name("BlocksEvicted"));
+  private final Counter mBlocksPromoted = mMetricRegistry.counter(MetricRegistry
+          .name("BlocksPromoted"));
 
   public WorkerSource(final WorkerStorage workerStorage) {
     mMetricRegistry.register(MetricRegistry.name("CapacityTotalGB"), new Gauge<Long>() {
@@ -71,12 +77,25 @@ public class WorkerSource implements Source {
     return mMetricRegistry;
   }
 
-
-  public void incBlocksRemoved() {
-    mBlocksRemoved.inc();
-  }
-
   public void incBlocksAccessed() {
     mBlocksAccessed.inc();
   }
+
+  public void incBlocksCanceled() {
+    mBlocksCanceled.inc();
+  }
+
+  public void incBlocksDeleted() {
+    mBlocksDeleted.inc();
+  }
+
+  public void incBlocksEvicted() {
+    mBlocksEvicted.inc();
+  }
+
+  public void incBlocksPromoted() {
+    mBlocksPromoted.inc();
+  }
+
+
 }

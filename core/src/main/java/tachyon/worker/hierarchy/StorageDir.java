@@ -205,6 +205,7 @@ public final class StorageDir {
       allocatedBytes = 0L;
     }
     returnSpace(userId, allocatedBytes);
+    mWorkerSource.incBlocksCanceled();
     if (!mFs.exists(filePath)) {
       return true;
     } else {
@@ -303,7 +304,7 @@ public final class StorageDir {
       mToRemoveBlockIdSet.add(blockId);
       LOG.debug("Add block file {} to remove list!", blockfile);
     }
-    mWorkerSource.incBlocksRemoved();
+    mWorkerSource.incBlocksDeleted();
     return true;
   }
 

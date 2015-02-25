@@ -43,6 +43,8 @@ public class MasterSource implements Source {
       .name("DeleteFileOps"));
   private final Counter mFilesRenamed = mMetricRegistry.counter(MetricRegistry
       .name("FilesRenamed"));
+  private final Counter mFilesCheckpointed = mMetricRegistry.counter(MetricRegistry
+          .name("FilesCheckpointed"));
   private final Counter mGetFileStatusOps = mMetricRegistry.counter(MetricRegistry
       .name("GetFileStatusOps"));
 
@@ -166,6 +168,10 @@ public class MasterSource implements Source {
 
   public void incFilesRenamed() {
     mFilesRenamed.inc();
+  }
+
+  public void incFilesCheckpointed() {
+    mFilesCheckpointed.inc();
   }
 
   public void incGetFileStatusOps() {

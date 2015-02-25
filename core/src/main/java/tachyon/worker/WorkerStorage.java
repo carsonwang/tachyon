@@ -784,6 +784,7 @@ public class WorkerStorage {
         }
         if (result) {
           storageDir.deleteBlock(blockId);
+          mWorkerSource.incBlocksPromoted();
         }
         return result;
       } catch (IOException e) {

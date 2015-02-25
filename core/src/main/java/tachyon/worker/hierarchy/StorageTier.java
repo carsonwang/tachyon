@@ -57,6 +57,7 @@ public class StorageTier {
   private final EvictStrategy mBlockEvictor;
   /** Capacity of current StorageTier in bytes */
   private final long mCapacityBytes;
+  private final WorkerSource mWorkerSource;
   /** Max retry times when requesting space from current StorageTier */
   private static final int FAILED_SPACE_REQUEST_LIMITS = UserConf.get().FAILED_SPACE_REQUEST_LIMITS;
 
@@ -89,6 +90,7 @@ public class StorageTier {
     }
     mCapacityBytes = quotaBytes;
     mNextTier = nextTier;
+    mWorkerSource = workerSource;
     mSpaceAllocator =
         AllocateStrategies.getAllocateStrategy(WorkerConf.get().ALLOCATE_STRATEGY_TYPE);
     mBlockEvictor =
@@ -302,6 +304,7 @@ public class StorageTier {
                       removedBlockIds);
               dir.moveBlock(blockId, dstDir);
             }
+            mWorkerSource.incBlocksEvicted();
             LOG.debug("Evicted block Id:{}" + blockId);
           }
         }
