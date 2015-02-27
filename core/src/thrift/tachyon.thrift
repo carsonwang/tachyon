@@ -336,6 +336,16 @@ service WorkerService {
   bool unlockBlock(1: i64 blockId, 2: i64 userId)
 
   /**
+   * Used to update the client BytesRead metrics.
+   */
+  void updateBytesRead(1: i64 blockId, 2: i64 localBytes, 3: i64 remoteBytes, 4: i64 ufsBytes)
+
+  /**
+   * Used to update the client BytesWritten metrics.
+   */
+  void updateBytesWritten(1: i64 blockId, 2: i64 writeBytes)
+
+  /**
    * Local user send heartbeat to local worker to keep its temporary folder.
    */
   void userHeartbeat(1: i64 userId)

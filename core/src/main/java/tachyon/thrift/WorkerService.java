@@ -123,6 +123,24 @@ public class WorkerService {
     public boolean unlockBlock(long blockId, long userId) throws org.apache.thrift.TException;
 
     /**
+     * Used to update the client BytesRead metrics.
+     * 
+     * @param blockId
+     * @param localBytes
+     * @param remoteBytes
+     * @param ufsBytes
+     */
+    public void updateBytesRead(long blockId, long localBytes, long remoteBytes, long ufsBytes) throws org.apache.thrift.TException;
+
+    /**
+     * Used to update the client BytesWritten metrics.
+     * 
+     * @param blockId
+     * @param writeBytes
+     */
+    public void updateBytesWritten(long blockId, long writeBytes) throws org.apache.thrift.TException;
+
+    /**
      * Local user send heartbeat to local worker to keep its temporary folder.
      * 
      * @param userId
@@ -154,6 +172,10 @@ public class WorkerService {
     public void requestSpace(long userId, long blockId, long requestBytes, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
 
     public void unlockBlock(long blockId, long userId, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
+
+    public void updateBytesRead(long blockId, long localBytes, long remoteBytes, long ufsBytes, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
+
+    public void updateBytesWritten(long blockId, long writeBytes, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
 
     public void userHeartbeat(long userId, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
 
@@ -460,6 +482,50 @@ public class WorkerService {
         return result.success;
       }
       throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "unlockBlock failed: unknown result");
+    }
+
+    public void updateBytesRead(long blockId, long localBytes, long remoteBytes, long ufsBytes) throws org.apache.thrift.TException
+    {
+      send_updateBytesRead(blockId, localBytes, remoteBytes, ufsBytes);
+      recv_updateBytesRead();
+    }
+
+    public void send_updateBytesRead(long blockId, long localBytes, long remoteBytes, long ufsBytes) throws org.apache.thrift.TException
+    {
+      updateBytesRead_args args = new updateBytesRead_args();
+      args.setBlockId(blockId);
+      args.setLocalBytes(localBytes);
+      args.setRemoteBytes(remoteBytes);
+      args.setUfsBytes(ufsBytes);
+      sendBase("updateBytesRead", args);
+    }
+
+    public void recv_updateBytesRead() throws org.apache.thrift.TException
+    {
+      updateBytesRead_result result = new updateBytesRead_result();
+      receiveBase(result, "updateBytesRead");
+      return;
+    }
+
+    public void updateBytesWritten(long blockId, long writeBytes) throws org.apache.thrift.TException
+    {
+      send_updateBytesWritten(blockId, writeBytes);
+      recv_updateBytesWritten();
+    }
+
+    public void send_updateBytesWritten(long blockId, long writeBytes) throws org.apache.thrift.TException
+    {
+      updateBytesWritten_args args = new updateBytesWritten_args();
+      args.setBlockId(blockId);
+      args.setWriteBytes(writeBytes);
+      sendBase("updateBytesWritten", args);
+    }
+
+    public void recv_updateBytesWritten() throws org.apache.thrift.TException
+    {
+      updateBytesWritten_result result = new updateBytesWritten_result();
+      receiveBase(result, "updateBytesWritten");
+      return;
     }
 
     public void userHeartbeat(long userId) throws org.apache.thrift.TException
@@ -879,6 +945,82 @@ public class WorkerService {
       }
     }
 
+    public void updateBytesRead(long blockId, long localBytes, long remoteBytes, long ufsBytes, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
+      checkReady();
+      updateBytesRead_call method_call = new updateBytesRead_call(blockId, localBytes, remoteBytes, ufsBytes, resultHandler, this, ___protocolFactory, ___transport);
+      this.___currentMethod = method_call;
+      ___manager.call(method_call);
+    }
+
+    public static class updateBytesRead_call extends org.apache.thrift.async.TAsyncMethodCall {
+      private long blockId;
+      private long localBytes;
+      private long remoteBytes;
+      private long ufsBytes;
+      public updateBytesRead_call(long blockId, long localBytes, long remoteBytes, long ufsBytes, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
+        super(client, protocolFactory, transport, resultHandler, false);
+        this.blockId = blockId;
+        this.localBytes = localBytes;
+        this.remoteBytes = remoteBytes;
+        this.ufsBytes = ufsBytes;
+      }
+
+      public void write_args(org.apache.thrift.protocol.TProtocol prot) throws org.apache.thrift.TException {
+        prot.writeMessageBegin(new org.apache.thrift.protocol.TMessage("updateBytesRead", org.apache.thrift.protocol.TMessageType.CALL, 0));
+        updateBytesRead_args args = new updateBytesRead_args();
+        args.setBlockId(blockId);
+        args.setLocalBytes(localBytes);
+        args.setRemoteBytes(remoteBytes);
+        args.setUfsBytes(ufsBytes);
+        args.write(prot);
+        prot.writeMessageEnd();
+      }
+
+      public void getResult() throws org.apache.thrift.TException {
+        if (getState() != org.apache.thrift.async.TAsyncMethodCall.State.RESPONSE_READ) {
+          throw new IllegalStateException("Method call not finished!");
+        }
+        org.apache.thrift.transport.TMemoryInputTransport memoryTransport = new org.apache.thrift.transport.TMemoryInputTransport(getFrameBuffer().array());
+        org.apache.thrift.protocol.TProtocol prot = client.getProtocolFactory().getProtocol(memoryTransport);
+        (new Client(prot)).recv_updateBytesRead();
+      }
+    }
+
+    public void updateBytesWritten(long blockId, long writeBytes, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
+      checkReady();
+      updateBytesWritten_call method_call = new updateBytesWritten_call(blockId, writeBytes, resultHandler, this, ___protocolFactory, ___transport);
+      this.___currentMethod = method_call;
+      ___manager.call(method_call);
+    }
+
+    public static class updateBytesWritten_call extends org.apache.thrift.async.TAsyncMethodCall {
+      private long blockId;
+      private long writeBytes;
+      public updateBytesWritten_call(long blockId, long writeBytes, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
+        super(client, protocolFactory, transport, resultHandler, false);
+        this.blockId = blockId;
+        this.writeBytes = writeBytes;
+      }
+
+      public void write_args(org.apache.thrift.protocol.TProtocol prot) throws org.apache.thrift.TException {
+        prot.writeMessageBegin(new org.apache.thrift.protocol.TMessage("updateBytesWritten", org.apache.thrift.protocol.TMessageType.CALL, 0));
+        updateBytesWritten_args args = new updateBytesWritten_args();
+        args.setBlockId(blockId);
+        args.setWriteBytes(writeBytes);
+        args.write(prot);
+        prot.writeMessageEnd();
+      }
+
+      public void getResult() throws org.apache.thrift.TException {
+        if (getState() != org.apache.thrift.async.TAsyncMethodCall.State.RESPONSE_READ) {
+          throw new IllegalStateException("Method call not finished!");
+        }
+        org.apache.thrift.transport.TMemoryInputTransport memoryTransport = new org.apache.thrift.transport.TMemoryInputTransport(getFrameBuffer().array());
+        org.apache.thrift.protocol.TProtocol prot = client.getProtocolFactory().getProtocol(memoryTransport);
+        (new Client(prot)).recv_updateBytesWritten();
+      }
+    }
+
     public void userHeartbeat(long userId, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
       checkReady();
       userHeartbeat_call method_call = new userHeartbeat_call(userId, resultHandler, this, ___protocolFactory, ___transport);
@@ -935,6 +1077,8 @@ public class WorkerService {
       processMap.put("requestBlockLocation", new requestBlockLocation());
       processMap.put("requestSpace", new requestSpace());
       processMap.put("unlockBlock", new unlockBlock());
+      processMap.put("updateBytesRead", new updateBytesRead());
+      processMap.put("updateBytesWritten", new updateBytesWritten());
       processMap.put("userHeartbeat", new userHeartbeat());
       return processMap;
     }
@@ -1197,6 +1341,46 @@ public class WorkerService {
       }
     }
 
+    public static class updateBytesRead<I extends Iface> extends org.apache.thrift.ProcessFunction<I, updateBytesRead_args> {
+      public updateBytesRead() {
+        super("updateBytesRead");
+      }
+
+      public updateBytesRead_args getEmptyArgsInstance() {
+        return new updateBytesRead_args();
+      }
+
+      protected boolean isOneway() {
+        return false;
+      }
+
+      public updateBytesRead_result getResult(I iface, updateBytesRead_args args) throws org.apache.thrift.TException {
+        updateBytesRead_result result = new updateBytesRead_result();
+        iface.updateBytesRead(args.blockId, args.localBytes, args.remoteBytes, args.ufsBytes);
+        return result;
+      }
+    }
+
+    public static class updateBytesWritten<I extends Iface> extends org.apache.thrift.ProcessFunction<I, updateBytesWritten_args> {
+      public updateBytesWritten() {
+        super("updateBytesWritten");
+      }
+
+      public updateBytesWritten_args getEmptyArgsInstance() {
+        return new updateBytesWritten_args();
+      }
+
+      protected boolean isOneway() {
+        return false;
+      }
+
+      public updateBytesWritten_result getResult(I iface, updateBytesWritten_args args) throws org.apache.thrift.TException {
+        updateBytesWritten_result result = new updateBytesWritten_result();
+        iface.updateBytesWritten(args.blockId, args.writeBytes);
+        return result;
+      }
+    }
+
     public static class userHeartbeat<I extends Iface> extends org.apache.thrift.ProcessFunction<I, userHeartbeat_args> {
       public userHeartbeat() {
         super("userHeartbeat");
@@ -1241,6 +1425,8 @@ public class WorkerService {
       processMap.put("requestBlockLocation", new requestBlockLocation());
       processMap.put("requestSpace", new requestSpace());
       processMap.put("unlockBlock", new unlockBlock());
+      processMap.put("updateBytesRead", new updateBytesRead());
+      processMap.put("updateBytesWritten", new updateBytesWritten());
       processMap.put("userHeartbeat", new userHeartbeat());
       return processMap;
     }
@@ -1864,6 +2050,106 @@ public class WorkerService {
 
       public void start(I iface, unlockBlock_args args, org.apache.thrift.async.AsyncMethodCallback<Boolean> resultHandler) throws TException {
         iface.unlockBlock(args.blockId, args.userId,resultHandler);
+      }
+    }
+
+    public static class updateBytesRead<I extends AsyncIface> extends org.apache.thrift.AsyncProcessFunction<I, updateBytesRead_args, Void> {
+      public updateBytesRead() {
+        super("updateBytesRead");
+      }
+
+      public updateBytesRead_args getEmptyArgsInstance() {
+        return new updateBytesRead_args();
+      }
+
+      public AsyncMethodCallback<Void> getResultHandler(final AsyncFrameBuffer fb, final int seqid) {
+        final org.apache.thrift.AsyncProcessFunction fcall = this;
+        return new AsyncMethodCallback<Void>() { 
+          public void onComplete(Void o) {
+            updateBytesRead_result result = new updateBytesRead_result();
+            try {
+              fcall.sendResponse(fb,result, org.apache.thrift.protocol.TMessageType.REPLY,seqid);
+              return;
+            } catch (Exception e) {
+              LOGGER.error("Exception writing to internal frame buffer", e);
+            }
+            fb.close();
+          }
+          public void onError(Exception e) {
+            byte msgType = org.apache.thrift.protocol.TMessageType.REPLY;
+            org.apache.thrift.TBase msg;
+            updateBytesRead_result result = new updateBytesRead_result();
+            {
+              msgType = org.apache.thrift.protocol.TMessageType.EXCEPTION;
+              msg = (org.apache.thrift.TBase)new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.INTERNAL_ERROR, e.getMessage());
+            }
+            try {
+              fcall.sendResponse(fb,msg,msgType,seqid);
+              return;
+            } catch (Exception ex) {
+              LOGGER.error("Exception writing to internal frame buffer", ex);
+            }
+            fb.close();
+          }
+        };
+      }
+
+      protected boolean isOneway() {
+        return false;
+      }
+
+      public void start(I iface, updateBytesRead_args args, org.apache.thrift.async.AsyncMethodCallback<Void> resultHandler) throws TException {
+        iface.updateBytesRead(args.blockId, args.localBytes, args.remoteBytes, args.ufsBytes,resultHandler);
+      }
+    }
+
+    public static class updateBytesWritten<I extends AsyncIface> extends org.apache.thrift.AsyncProcessFunction<I, updateBytesWritten_args, Void> {
+      public updateBytesWritten() {
+        super("updateBytesWritten");
+      }
+
+      public updateBytesWritten_args getEmptyArgsInstance() {
+        return new updateBytesWritten_args();
+      }
+
+      public AsyncMethodCallback<Void> getResultHandler(final AsyncFrameBuffer fb, final int seqid) {
+        final org.apache.thrift.AsyncProcessFunction fcall = this;
+        return new AsyncMethodCallback<Void>() { 
+          public void onComplete(Void o) {
+            updateBytesWritten_result result = new updateBytesWritten_result();
+            try {
+              fcall.sendResponse(fb,result, org.apache.thrift.protocol.TMessageType.REPLY,seqid);
+              return;
+            } catch (Exception e) {
+              LOGGER.error("Exception writing to internal frame buffer", e);
+            }
+            fb.close();
+          }
+          public void onError(Exception e) {
+            byte msgType = org.apache.thrift.protocol.TMessageType.REPLY;
+            org.apache.thrift.TBase msg;
+            updateBytesWritten_result result = new updateBytesWritten_result();
+            {
+              msgType = org.apache.thrift.protocol.TMessageType.EXCEPTION;
+              msg = (org.apache.thrift.TBase)new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.INTERNAL_ERROR, e.getMessage());
+            }
+            try {
+              fcall.sendResponse(fb,msg,msgType,seqid);
+              return;
+            } catch (Exception ex) {
+              LOGGER.error("Exception writing to internal frame buffer", ex);
+            }
+            fb.close();
+          }
+        };
+      }
+
+      protected boolean isOneway() {
+        return false;
+      }
+
+      public void start(I iface, updateBytesWritten_args args, org.apache.thrift.async.AsyncMethodCallback<Void> resultHandler) throws TException {
+        iface.updateBytesWritten(args.blockId, args.writeBytes,resultHandler);
       }
     }
 
@@ -11232,6 +11518,1578 @@ public class WorkerService {
           struct.success = iprot.readBool();
           struct.setSuccessIsSet(true);
         }
+      }
+    }
+
+  }
+
+  public static class updateBytesRead_args implements org.apache.thrift.TBase<updateBytesRead_args, updateBytesRead_args._Fields>, java.io.Serializable, Cloneable, Comparable<updateBytesRead_args>   {
+    private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("updateBytesRead_args");
+
+    private static final org.apache.thrift.protocol.TField BLOCK_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("blockId", org.apache.thrift.protocol.TType.I64, (short)1);
+    private static final org.apache.thrift.protocol.TField LOCAL_BYTES_FIELD_DESC = new org.apache.thrift.protocol.TField("localBytes", org.apache.thrift.protocol.TType.I64, (short)2);
+    private static final org.apache.thrift.protocol.TField REMOTE_BYTES_FIELD_DESC = new org.apache.thrift.protocol.TField("remoteBytes", org.apache.thrift.protocol.TType.I64, (short)3);
+    private static final org.apache.thrift.protocol.TField UFS_BYTES_FIELD_DESC = new org.apache.thrift.protocol.TField("ufsBytes", org.apache.thrift.protocol.TType.I64, (short)4);
+
+    private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
+    static {
+      schemes.put(StandardScheme.class, new updateBytesRead_argsStandardSchemeFactory());
+      schemes.put(TupleScheme.class, new updateBytesRead_argsTupleSchemeFactory());
+    }
+
+    public long blockId; // required
+    public long localBytes; // required
+    public long remoteBytes; // required
+    public long ufsBytes; // required
+
+    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+    public enum _Fields implements org.apache.thrift.TFieldIdEnum {
+      BLOCK_ID((short)1, "blockId"),
+      LOCAL_BYTES((short)2, "localBytes"),
+      REMOTE_BYTES((short)3, "remoteBytes"),
+      UFS_BYTES((short)4, "ufsBytes");
+
+      private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
+
+      static {
+        for (_Fields field : EnumSet.allOf(_Fields.class)) {
+          byName.put(field.getFieldName(), field);
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, or null if its not found.
+       */
+      public static _Fields findByThriftId(int fieldId) {
+        switch(fieldId) {
+          case 1: // BLOCK_ID
+            return BLOCK_ID;
+          case 2: // LOCAL_BYTES
+            return LOCAL_BYTES;
+          case 3: // REMOTE_BYTES
+            return REMOTE_BYTES;
+          case 4: // UFS_BYTES
+            return UFS_BYTES;
+          default:
+            return null;
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, throwing an exception
+       * if it is not found.
+       */
+      public static _Fields findByThriftIdOrThrow(int fieldId) {
+        _Fields fields = findByThriftId(fieldId);
+        if (fields == null) throw new IllegalArgumentException("Field " + fieldId + " doesn't exist!");
+        return fields;
+      }
+
+      /**
+       * Find the _Fields constant that matches name, or null if its not found.
+       */
+      public static _Fields findByName(String name) {
+        return byName.get(name);
+      }
+
+      private final short _thriftId;
+      private final String _fieldName;
+
+      _Fields(short thriftId, String fieldName) {
+        _thriftId = thriftId;
+        _fieldName = fieldName;
+      }
+
+      public short getThriftFieldId() {
+        return _thriftId;
+      }
+
+      public String getFieldName() {
+        return _fieldName;
+      }
+    }
+
+    // isset id assignments
+    private static final int __BLOCKID_ISSET_ID = 0;
+    private static final int __LOCALBYTES_ISSET_ID = 1;
+    private static final int __REMOTEBYTES_ISSET_ID = 2;
+    private static final int __UFSBYTES_ISSET_ID = 3;
+    private byte __isset_bitfield = 0;
+    public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
+    static {
+      Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
+      tmpMap.put(_Fields.BLOCK_ID, new org.apache.thrift.meta_data.FieldMetaData("blockId", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
+      tmpMap.put(_Fields.LOCAL_BYTES, new org.apache.thrift.meta_data.FieldMetaData("localBytes", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
+      tmpMap.put(_Fields.REMOTE_BYTES, new org.apache.thrift.meta_data.FieldMetaData("remoteBytes", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
+      tmpMap.put(_Fields.UFS_BYTES, new org.apache.thrift.meta_data.FieldMetaData("ufsBytes", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
+      metaDataMap = Collections.unmodifiableMap(tmpMap);
+      org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(updateBytesRead_args.class, metaDataMap);
+    }
+
+    public updateBytesRead_args() {
+    }
+
+    public updateBytesRead_args(
+      long blockId,
+      long localBytes,
+      long remoteBytes,
+      long ufsBytes)
+    {
+      this();
+      this.blockId = blockId;
+      setBlockIdIsSet(true);
+      this.localBytes = localBytes;
+      setLocalBytesIsSet(true);
+      this.remoteBytes = remoteBytes;
+      setRemoteBytesIsSet(true);
+      this.ufsBytes = ufsBytes;
+      setUfsBytesIsSet(true);
+    }
+
+    /**
+     * Performs a deep copy on <i>other</i>.
+     */
+    public updateBytesRead_args(updateBytesRead_args other) {
+      __isset_bitfield = other.__isset_bitfield;
+      this.blockId = other.blockId;
+      this.localBytes = other.localBytes;
+      this.remoteBytes = other.remoteBytes;
+      this.ufsBytes = other.ufsBytes;
+    }
+
+    public updateBytesRead_args deepCopy() {
+      return new updateBytesRead_args(this);
+    }
+
+    @Override
+    public void clear() {
+      setBlockIdIsSet(false);
+      this.blockId = 0;
+      setLocalBytesIsSet(false);
+      this.localBytes = 0;
+      setRemoteBytesIsSet(false);
+      this.remoteBytes = 0;
+      setUfsBytesIsSet(false);
+      this.ufsBytes = 0;
+    }
+
+    public long getBlockId() {
+      return this.blockId;
+    }
+
+    public updateBytesRead_args setBlockId(long blockId) {
+      this.blockId = blockId;
+      setBlockIdIsSet(true);
+      return this;
+    }
+
+    public void unsetBlockId() {
+      __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __BLOCKID_ISSET_ID);
+    }
+
+    /** Returns true if field blockId is set (has been assigned a value) and false otherwise */
+    public boolean isSetBlockId() {
+      return EncodingUtils.testBit(__isset_bitfield, __BLOCKID_ISSET_ID);
+    }
+
+    public void setBlockIdIsSet(boolean value) {
+      __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __BLOCKID_ISSET_ID, value);
+    }
+
+    public long getLocalBytes() {
+      return this.localBytes;
+    }
+
+    public updateBytesRead_args setLocalBytes(long localBytes) {
+      this.localBytes = localBytes;
+      setLocalBytesIsSet(true);
+      return this;
+    }
+
+    public void unsetLocalBytes() {
+      __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __LOCALBYTES_ISSET_ID);
+    }
+
+    /** Returns true if field localBytes is set (has been assigned a value) and false otherwise */
+    public boolean isSetLocalBytes() {
+      return EncodingUtils.testBit(__isset_bitfield, __LOCALBYTES_ISSET_ID);
+    }
+
+    public void setLocalBytesIsSet(boolean value) {
+      __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __LOCALBYTES_ISSET_ID, value);
+    }
+
+    public long getRemoteBytes() {
+      return this.remoteBytes;
+    }
+
+    public updateBytesRead_args setRemoteBytes(long remoteBytes) {
+      this.remoteBytes = remoteBytes;
+      setRemoteBytesIsSet(true);
+      return this;
+    }
+
+    public void unsetRemoteBytes() {
+      __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __REMOTEBYTES_ISSET_ID);
+    }
+
+    /** Returns true if field remoteBytes is set (has been assigned a value) and false otherwise */
+    public boolean isSetRemoteBytes() {
+      return EncodingUtils.testBit(__isset_bitfield, __REMOTEBYTES_ISSET_ID);
+    }
+
+    public void setRemoteBytesIsSet(boolean value) {
+      __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __REMOTEBYTES_ISSET_ID, value);
+    }
+
+    public long getUfsBytes() {
+      return this.ufsBytes;
+    }
+
+    public updateBytesRead_args setUfsBytes(long ufsBytes) {
+      this.ufsBytes = ufsBytes;
+      setUfsBytesIsSet(true);
+      return this;
+    }
+
+    public void unsetUfsBytes() {
+      __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __UFSBYTES_ISSET_ID);
+    }
+
+    /** Returns true if field ufsBytes is set (has been assigned a value) and false otherwise */
+    public boolean isSetUfsBytes() {
+      return EncodingUtils.testBit(__isset_bitfield, __UFSBYTES_ISSET_ID);
+    }
+
+    public void setUfsBytesIsSet(boolean value) {
+      __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __UFSBYTES_ISSET_ID, value);
+    }
+
+    public void setFieldValue(_Fields field, Object value) {
+      switch (field) {
+      case BLOCK_ID:
+        if (value == null) {
+          unsetBlockId();
+        } else {
+          setBlockId((Long)value);
+        }
+        break;
+
+      case LOCAL_BYTES:
+        if (value == null) {
+          unsetLocalBytes();
+        } else {
+          setLocalBytes((Long)value);
+        }
+        break;
+
+      case REMOTE_BYTES:
+        if (value == null) {
+          unsetRemoteBytes();
+        } else {
+          setRemoteBytes((Long)value);
+        }
+        break;
+
+      case UFS_BYTES:
+        if (value == null) {
+          unsetUfsBytes();
+        } else {
+          setUfsBytes((Long)value);
+        }
+        break;
+
+      }
+    }
+
+    public Object getFieldValue(_Fields field) {
+      switch (field) {
+      case BLOCK_ID:
+        return Long.valueOf(getBlockId());
+
+      case LOCAL_BYTES:
+        return Long.valueOf(getLocalBytes());
+
+      case REMOTE_BYTES:
+        return Long.valueOf(getRemoteBytes());
+
+      case UFS_BYTES:
+        return Long.valueOf(getUfsBytes());
+
+      }
+      throw new IllegalStateException();
+    }
+
+    /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+    public boolean isSet(_Fields field) {
+      if (field == null) {
+        throw new IllegalArgumentException();
+      }
+
+      switch (field) {
+      case BLOCK_ID:
+        return isSetBlockId();
+      case LOCAL_BYTES:
+        return isSetLocalBytes();
+      case REMOTE_BYTES:
+        return isSetRemoteBytes();
+      case UFS_BYTES:
+        return isSetUfsBytes();
+      }
+      throw new IllegalStateException();
+    }
+
+    @Override
+    public boolean equals(Object that) {
+      if (that == null)
+        return false;
+      if (that instanceof updateBytesRead_args)
+        return this.equals((updateBytesRead_args)that);
+      return false;
+    }
+
+    public boolean equals(updateBytesRead_args that) {
+      if (that == null)
+        return false;
+
+      boolean this_present_blockId = true;
+      boolean that_present_blockId = true;
+      if (this_present_blockId || that_present_blockId) {
+        if (!(this_present_blockId && that_present_blockId))
+          return false;
+        if (this.blockId != that.blockId)
+          return false;
+      }
+
+      boolean this_present_localBytes = true;
+      boolean that_present_localBytes = true;
+      if (this_present_localBytes || that_present_localBytes) {
+        if (!(this_present_localBytes && that_present_localBytes))
+          return false;
+        if (this.localBytes != that.localBytes)
+          return false;
+      }
+
+      boolean this_present_remoteBytes = true;
+      boolean that_present_remoteBytes = true;
+      if (this_present_remoteBytes || that_present_remoteBytes) {
+        if (!(this_present_remoteBytes && that_present_remoteBytes))
+          return false;
+        if (this.remoteBytes != that.remoteBytes)
+          return false;
+      }
+
+      boolean this_present_ufsBytes = true;
+      boolean that_present_ufsBytes = true;
+      if (this_present_ufsBytes || that_present_ufsBytes) {
+        if (!(this_present_ufsBytes && that_present_ufsBytes))
+          return false;
+        if (this.ufsBytes != that.ufsBytes)
+          return false;
+      }
+
+      return true;
+    }
+
+    @Override
+    public int hashCode() {
+      return 0;
+    }
+
+    @Override
+    public int compareTo(updateBytesRead_args other) {
+      if (!getClass().equals(other.getClass())) {
+        return getClass().getName().compareTo(other.getClass().getName());
+      }
+
+      int lastComparison = 0;
+
+      lastComparison = Boolean.valueOf(isSetBlockId()).compareTo(other.isSetBlockId());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetBlockId()) {
+        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.blockId, other.blockId);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
+      lastComparison = Boolean.valueOf(isSetLocalBytes()).compareTo(other.isSetLocalBytes());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetLocalBytes()) {
+        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.localBytes, other.localBytes);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
+      lastComparison = Boolean.valueOf(isSetRemoteBytes()).compareTo(other.isSetRemoteBytes());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetRemoteBytes()) {
+        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.remoteBytes, other.remoteBytes);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
+      lastComparison = Boolean.valueOf(isSetUfsBytes()).compareTo(other.isSetUfsBytes());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetUfsBytes()) {
+        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.ufsBytes, other.ufsBytes);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
+      return 0;
+    }
+
+    public _Fields fieldForId(int fieldId) {
+      return _Fields.findByThriftId(fieldId);
+    }
+
+    public void read(org.apache.thrift.protocol.TProtocol iprot) throws org.apache.thrift.TException {
+      schemes.get(iprot.getScheme()).getScheme().read(iprot, this);
+    }
+
+    public void write(org.apache.thrift.protocol.TProtocol oprot) throws org.apache.thrift.TException {
+      schemes.get(oprot.getScheme()).getScheme().write(oprot, this);
+    }
+
+    @Override
+    public String toString() {
+      StringBuilder sb = new StringBuilder("updateBytesRead_args(");
+      boolean first = true;
+
+      sb.append("blockId:");
+      sb.append(this.blockId);
+      first = false;
+      if (!first) sb.append(", ");
+      sb.append("localBytes:");
+      sb.append(this.localBytes);
+      first = false;
+      if (!first) sb.append(", ");
+      sb.append("remoteBytes:");
+      sb.append(this.remoteBytes);
+      first = false;
+      if (!first) sb.append(", ");
+      sb.append("ufsBytes:");
+      sb.append(this.ufsBytes);
+      first = false;
+      sb.append(")");
+      return sb.toString();
+    }
+
+    public void validate() throws org.apache.thrift.TException {
+      // check for required fields
+      // check for sub-struct validity
+    }
+
+    private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
+      try {
+        write(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(out)));
+      } catch (org.apache.thrift.TException te) {
+        throw new java.io.IOException(te);
+      }
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+      try {
+        // it doesn't seem like you should have to do this, but java serialization is wacky, and doesn't call the default constructor.
+        __isset_bitfield = 0;
+        read(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(in)));
+      } catch (org.apache.thrift.TException te) {
+        throw new java.io.IOException(te);
+      }
+    }
+
+    private static class updateBytesRead_argsStandardSchemeFactory implements SchemeFactory {
+      public updateBytesRead_argsStandardScheme getScheme() {
+        return new updateBytesRead_argsStandardScheme();
+      }
+    }
+
+    private static class updateBytesRead_argsStandardScheme extends StandardScheme<updateBytesRead_args> {
+
+      public void read(org.apache.thrift.protocol.TProtocol iprot, updateBytesRead_args struct) throws org.apache.thrift.TException {
+        org.apache.thrift.protocol.TField schemeField;
+        iprot.readStructBegin();
+        while (true)
+        {
+          schemeField = iprot.readFieldBegin();
+          if (schemeField.type == org.apache.thrift.protocol.TType.STOP) { 
+            break;
+          }
+          switch (schemeField.id) {
+            case 1: // BLOCK_ID
+              if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
+                struct.blockId = iprot.readI64();
+                struct.setBlockIdIsSet(true);
+              } else { 
+                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+              }
+              break;
+            case 2: // LOCAL_BYTES
+              if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
+                struct.localBytes = iprot.readI64();
+                struct.setLocalBytesIsSet(true);
+              } else { 
+                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+              }
+              break;
+            case 3: // REMOTE_BYTES
+              if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
+                struct.remoteBytes = iprot.readI64();
+                struct.setRemoteBytesIsSet(true);
+              } else { 
+                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+              }
+              break;
+            case 4: // UFS_BYTES
+              if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
+                struct.ufsBytes = iprot.readI64();
+                struct.setUfsBytesIsSet(true);
+              } else { 
+                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+              }
+              break;
+            default:
+              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+          }
+          iprot.readFieldEnd();
+        }
+        iprot.readStructEnd();
+
+        // check for required fields of primitive type, which can't be checked in the validate method
+        struct.validate();
+      }
+
+      public void write(org.apache.thrift.protocol.TProtocol oprot, updateBytesRead_args struct) throws org.apache.thrift.TException {
+        struct.validate();
+
+        oprot.writeStructBegin(STRUCT_DESC);
+        oprot.writeFieldBegin(BLOCK_ID_FIELD_DESC);
+        oprot.writeI64(struct.blockId);
+        oprot.writeFieldEnd();
+        oprot.writeFieldBegin(LOCAL_BYTES_FIELD_DESC);
+        oprot.writeI64(struct.localBytes);
+        oprot.writeFieldEnd();
+        oprot.writeFieldBegin(REMOTE_BYTES_FIELD_DESC);
+        oprot.writeI64(struct.remoteBytes);
+        oprot.writeFieldEnd();
+        oprot.writeFieldBegin(UFS_BYTES_FIELD_DESC);
+        oprot.writeI64(struct.ufsBytes);
+        oprot.writeFieldEnd();
+        oprot.writeFieldStop();
+        oprot.writeStructEnd();
+      }
+
+    }
+
+    private static class updateBytesRead_argsTupleSchemeFactory implements SchemeFactory {
+      public updateBytesRead_argsTupleScheme getScheme() {
+        return new updateBytesRead_argsTupleScheme();
+      }
+    }
+
+    private static class updateBytesRead_argsTupleScheme extends TupleScheme<updateBytesRead_args> {
+
+      @Override
+      public void write(org.apache.thrift.protocol.TProtocol prot, updateBytesRead_args struct) throws org.apache.thrift.TException {
+        TTupleProtocol oprot = (TTupleProtocol) prot;
+        BitSet optionals = new BitSet();
+        if (struct.isSetBlockId()) {
+          optionals.set(0);
+        }
+        if (struct.isSetLocalBytes()) {
+          optionals.set(1);
+        }
+        if (struct.isSetRemoteBytes()) {
+          optionals.set(2);
+        }
+        if (struct.isSetUfsBytes()) {
+          optionals.set(3);
+        }
+        oprot.writeBitSet(optionals, 4);
+        if (struct.isSetBlockId()) {
+          oprot.writeI64(struct.blockId);
+        }
+        if (struct.isSetLocalBytes()) {
+          oprot.writeI64(struct.localBytes);
+        }
+        if (struct.isSetRemoteBytes()) {
+          oprot.writeI64(struct.remoteBytes);
+        }
+        if (struct.isSetUfsBytes()) {
+          oprot.writeI64(struct.ufsBytes);
+        }
+      }
+
+      @Override
+      public void read(org.apache.thrift.protocol.TProtocol prot, updateBytesRead_args struct) throws org.apache.thrift.TException {
+        TTupleProtocol iprot = (TTupleProtocol) prot;
+        BitSet incoming = iprot.readBitSet(4);
+        if (incoming.get(0)) {
+          struct.blockId = iprot.readI64();
+          struct.setBlockIdIsSet(true);
+        }
+        if (incoming.get(1)) {
+          struct.localBytes = iprot.readI64();
+          struct.setLocalBytesIsSet(true);
+        }
+        if (incoming.get(2)) {
+          struct.remoteBytes = iprot.readI64();
+          struct.setRemoteBytesIsSet(true);
+        }
+        if (incoming.get(3)) {
+          struct.ufsBytes = iprot.readI64();
+          struct.setUfsBytesIsSet(true);
+        }
+      }
+    }
+
+  }
+
+  public static class updateBytesRead_result implements org.apache.thrift.TBase<updateBytesRead_result, updateBytesRead_result._Fields>, java.io.Serializable, Cloneable, Comparable<updateBytesRead_result>   {
+    private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("updateBytesRead_result");
+
+
+    private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
+    static {
+      schemes.put(StandardScheme.class, new updateBytesRead_resultStandardSchemeFactory());
+      schemes.put(TupleScheme.class, new updateBytesRead_resultTupleSchemeFactory());
+    }
+
+
+    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+    public enum _Fields implements org.apache.thrift.TFieldIdEnum {
+;
+
+      private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
+
+      static {
+        for (_Fields field : EnumSet.allOf(_Fields.class)) {
+          byName.put(field.getFieldName(), field);
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, or null if its not found.
+       */
+      public static _Fields findByThriftId(int fieldId) {
+        switch(fieldId) {
+          default:
+            return null;
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, throwing an exception
+       * if it is not found.
+       */
+      public static _Fields findByThriftIdOrThrow(int fieldId) {
+        _Fields fields = findByThriftId(fieldId);
+        if (fields == null) throw new IllegalArgumentException("Field " + fieldId + " doesn't exist!");
+        return fields;
+      }
+
+      /**
+       * Find the _Fields constant that matches name, or null if its not found.
+       */
+      public static _Fields findByName(String name) {
+        return byName.get(name);
+      }
+
+      private final short _thriftId;
+      private final String _fieldName;
+
+      _Fields(short thriftId, String fieldName) {
+        _thriftId = thriftId;
+        _fieldName = fieldName;
+      }
+
+      public short getThriftFieldId() {
+        return _thriftId;
+      }
+
+      public String getFieldName() {
+        return _fieldName;
+      }
+    }
+    public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
+    static {
+      Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
+      metaDataMap = Collections.unmodifiableMap(tmpMap);
+      org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(updateBytesRead_result.class, metaDataMap);
+    }
+
+    public updateBytesRead_result() {
+    }
+
+    /**
+     * Performs a deep copy on <i>other</i>.
+     */
+    public updateBytesRead_result(updateBytesRead_result other) {
+    }
+
+    public updateBytesRead_result deepCopy() {
+      return new updateBytesRead_result(this);
+    }
+
+    @Override
+    public void clear() {
+    }
+
+    public void setFieldValue(_Fields field, Object value) {
+      switch (field) {
+      }
+    }
+
+    public Object getFieldValue(_Fields field) {
+      switch (field) {
+      }
+      throw new IllegalStateException();
+    }
+
+    /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+    public boolean isSet(_Fields field) {
+      if (field == null) {
+        throw new IllegalArgumentException();
+      }
+
+      switch (field) {
+      }
+      throw new IllegalStateException();
+    }
+
+    @Override
+    public boolean equals(Object that) {
+      if (that == null)
+        return false;
+      if (that instanceof updateBytesRead_result)
+        return this.equals((updateBytesRead_result)that);
+      return false;
+    }
+
+    public boolean equals(updateBytesRead_result that) {
+      if (that == null)
+        return false;
+
+      return true;
+    }
+
+    @Override
+    public int hashCode() {
+      return 0;
+    }
+
+    @Override
+    public int compareTo(updateBytesRead_result other) {
+      if (!getClass().equals(other.getClass())) {
+        return getClass().getName().compareTo(other.getClass().getName());
+      }
+
+      int lastComparison = 0;
+
+      return 0;
+    }
+
+    public _Fields fieldForId(int fieldId) {
+      return _Fields.findByThriftId(fieldId);
+    }
+
+    public void read(org.apache.thrift.protocol.TProtocol iprot) throws org.apache.thrift.TException {
+      schemes.get(iprot.getScheme()).getScheme().read(iprot, this);
+    }
+
+    public void write(org.apache.thrift.protocol.TProtocol oprot) throws org.apache.thrift.TException {
+      schemes.get(oprot.getScheme()).getScheme().write(oprot, this);
+      }
+
+    @Override
+    public String toString() {
+      StringBuilder sb = new StringBuilder("updateBytesRead_result(");
+      boolean first = true;
+
+      sb.append(")");
+      return sb.toString();
+    }
+
+    public void validate() throws org.apache.thrift.TException {
+      // check for required fields
+      // check for sub-struct validity
+    }
+
+    private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
+      try {
+        write(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(out)));
+      } catch (org.apache.thrift.TException te) {
+        throw new java.io.IOException(te);
+      }
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+      try {
+        read(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(in)));
+      } catch (org.apache.thrift.TException te) {
+        throw new java.io.IOException(te);
+      }
+    }
+
+    private static class updateBytesRead_resultStandardSchemeFactory implements SchemeFactory {
+      public updateBytesRead_resultStandardScheme getScheme() {
+        return new updateBytesRead_resultStandardScheme();
+      }
+    }
+
+    private static class updateBytesRead_resultStandardScheme extends StandardScheme<updateBytesRead_result> {
+
+      public void read(org.apache.thrift.protocol.TProtocol iprot, updateBytesRead_result struct) throws org.apache.thrift.TException {
+        org.apache.thrift.protocol.TField schemeField;
+        iprot.readStructBegin();
+        while (true)
+        {
+          schemeField = iprot.readFieldBegin();
+          if (schemeField.type == org.apache.thrift.protocol.TType.STOP) { 
+            break;
+          }
+          switch (schemeField.id) {
+            default:
+              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+          }
+          iprot.readFieldEnd();
+        }
+        iprot.readStructEnd();
+
+        // check for required fields of primitive type, which can't be checked in the validate method
+        struct.validate();
+      }
+
+      public void write(org.apache.thrift.protocol.TProtocol oprot, updateBytesRead_result struct) throws org.apache.thrift.TException {
+        struct.validate();
+
+        oprot.writeStructBegin(STRUCT_DESC);
+        oprot.writeFieldStop();
+        oprot.writeStructEnd();
+      }
+
+    }
+
+    private static class updateBytesRead_resultTupleSchemeFactory implements SchemeFactory {
+      public updateBytesRead_resultTupleScheme getScheme() {
+        return new updateBytesRead_resultTupleScheme();
+      }
+    }
+
+    private static class updateBytesRead_resultTupleScheme extends TupleScheme<updateBytesRead_result> {
+
+      @Override
+      public void write(org.apache.thrift.protocol.TProtocol prot, updateBytesRead_result struct) throws org.apache.thrift.TException {
+        TTupleProtocol oprot = (TTupleProtocol) prot;
+      }
+
+      @Override
+      public void read(org.apache.thrift.protocol.TProtocol prot, updateBytesRead_result struct) throws org.apache.thrift.TException {
+        TTupleProtocol iprot = (TTupleProtocol) prot;
+      }
+    }
+
+  }
+
+  public static class updateBytesWritten_args implements org.apache.thrift.TBase<updateBytesWritten_args, updateBytesWritten_args._Fields>, java.io.Serializable, Cloneable, Comparable<updateBytesWritten_args>   {
+    private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("updateBytesWritten_args");
+
+    private static final org.apache.thrift.protocol.TField BLOCK_ID_FIELD_DESC = new org.apache.thrift.protocol.TField("blockId", org.apache.thrift.protocol.TType.I64, (short)1);
+    private static final org.apache.thrift.protocol.TField WRITE_BYTES_FIELD_DESC = new org.apache.thrift.protocol.TField("writeBytes", org.apache.thrift.protocol.TType.I64, (short)2);
+
+    private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
+    static {
+      schemes.put(StandardScheme.class, new updateBytesWritten_argsStandardSchemeFactory());
+      schemes.put(TupleScheme.class, new updateBytesWritten_argsTupleSchemeFactory());
+    }
+
+    public long blockId; // required
+    public long writeBytes; // required
+
+    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+    public enum _Fields implements org.apache.thrift.TFieldIdEnum {
+      BLOCK_ID((short)1, "blockId"),
+      WRITE_BYTES((short)2, "writeBytes");
+
+      private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
+
+      static {
+        for (_Fields field : EnumSet.allOf(_Fields.class)) {
+          byName.put(field.getFieldName(), field);
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, or null if its not found.
+       */
+      public static _Fields findByThriftId(int fieldId) {
+        switch(fieldId) {
+          case 1: // BLOCK_ID
+            return BLOCK_ID;
+          case 2: // WRITE_BYTES
+            return WRITE_BYTES;
+          default:
+            return null;
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, throwing an exception
+       * if it is not found.
+       */
+      public static _Fields findByThriftIdOrThrow(int fieldId) {
+        _Fields fields = findByThriftId(fieldId);
+        if (fields == null) throw new IllegalArgumentException("Field " + fieldId + " doesn't exist!");
+        return fields;
+      }
+
+      /**
+       * Find the _Fields constant that matches name, or null if its not found.
+       */
+      public static _Fields findByName(String name) {
+        return byName.get(name);
+      }
+
+      private final short _thriftId;
+      private final String _fieldName;
+
+      _Fields(short thriftId, String fieldName) {
+        _thriftId = thriftId;
+        _fieldName = fieldName;
+      }
+
+      public short getThriftFieldId() {
+        return _thriftId;
+      }
+
+      public String getFieldName() {
+        return _fieldName;
+      }
+    }
+
+    // isset id assignments
+    private static final int __BLOCKID_ISSET_ID = 0;
+    private static final int __WRITEBYTES_ISSET_ID = 1;
+    private byte __isset_bitfield = 0;
+    public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
+    static {
+      Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
+      tmpMap.put(_Fields.BLOCK_ID, new org.apache.thrift.meta_data.FieldMetaData("blockId", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
+      tmpMap.put(_Fields.WRITE_BYTES, new org.apache.thrift.meta_data.FieldMetaData("writeBytes", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I64)));
+      metaDataMap = Collections.unmodifiableMap(tmpMap);
+      org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(updateBytesWritten_args.class, metaDataMap);
+    }
+
+    public updateBytesWritten_args() {
+    }
+
+    public updateBytesWritten_args(
+      long blockId,
+      long writeBytes)
+    {
+      this();
+      this.blockId = blockId;
+      setBlockIdIsSet(true);
+      this.writeBytes = writeBytes;
+      setWriteBytesIsSet(true);
+    }
+
+    /**
+     * Performs a deep copy on <i>other</i>.
+     */
+    public updateBytesWritten_args(updateBytesWritten_args other) {
+      __isset_bitfield = other.__isset_bitfield;
+      this.blockId = other.blockId;
+      this.writeBytes = other.writeBytes;
+    }
+
+    public updateBytesWritten_args deepCopy() {
+      return new updateBytesWritten_args(this);
+    }
+
+    @Override
+    public void clear() {
+      setBlockIdIsSet(false);
+      this.blockId = 0;
+      setWriteBytesIsSet(false);
+      this.writeBytes = 0;
+    }
+
+    public long getBlockId() {
+      return this.blockId;
+    }
+
+    public updateBytesWritten_args setBlockId(long blockId) {
+      this.blockId = blockId;
+      setBlockIdIsSet(true);
+      return this;
+    }
+
+    public void unsetBlockId() {
+      __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __BLOCKID_ISSET_ID);
+    }
+
+    /** Returns true if field blockId is set (has been assigned a value) and false otherwise */
+    public boolean isSetBlockId() {
+      return EncodingUtils.testBit(__isset_bitfield, __BLOCKID_ISSET_ID);
+    }
+
+    public void setBlockIdIsSet(boolean value) {
+      __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __BLOCKID_ISSET_ID, value);
+    }
+
+    public long getWriteBytes() {
+      return this.writeBytes;
+    }
+
+    public updateBytesWritten_args setWriteBytes(long writeBytes) {
+      this.writeBytes = writeBytes;
+      setWriteBytesIsSet(true);
+      return this;
+    }
+
+    public void unsetWriteBytes() {
+      __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __WRITEBYTES_ISSET_ID);
+    }
+
+    /** Returns true if field writeBytes is set (has been assigned a value) and false otherwise */
+    public boolean isSetWriteBytes() {
+      return EncodingUtils.testBit(__isset_bitfield, __WRITEBYTES_ISSET_ID);
+    }
+
+    public void setWriteBytesIsSet(boolean value) {
+      __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __WRITEBYTES_ISSET_ID, value);
+    }
+
+    public void setFieldValue(_Fields field, Object value) {
+      switch (field) {
+      case BLOCK_ID:
+        if (value == null) {
+          unsetBlockId();
+        } else {
+          setBlockId((Long)value);
+        }
+        break;
+
+      case WRITE_BYTES:
+        if (value == null) {
+          unsetWriteBytes();
+        } else {
+          setWriteBytes((Long)value);
+        }
+        break;
+
+      }
+    }
+
+    public Object getFieldValue(_Fields field) {
+      switch (field) {
+      case BLOCK_ID:
+        return Long.valueOf(getBlockId());
+
+      case WRITE_BYTES:
+        return Long.valueOf(getWriteBytes());
+
+      }
+      throw new IllegalStateException();
+    }
+
+    /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+    public boolean isSet(_Fields field) {
+      if (field == null) {
+        throw new IllegalArgumentException();
+      }
+
+      switch (field) {
+      case BLOCK_ID:
+        return isSetBlockId();
+      case WRITE_BYTES:
+        return isSetWriteBytes();
+      }
+      throw new IllegalStateException();
+    }
+
+    @Override
+    public boolean equals(Object that) {
+      if (that == null)
+        return false;
+      if (that instanceof updateBytesWritten_args)
+        return this.equals((updateBytesWritten_args)that);
+      return false;
+    }
+
+    public boolean equals(updateBytesWritten_args that) {
+      if (that == null)
+        return false;
+
+      boolean this_present_blockId = true;
+      boolean that_present_blockId = true;
+      if (this_present_blockId || that_present_blockId) {
+        if (!(this_present_blockId && that_present_blockId))
+          return false;
+        if (this.blockId != that.blockId)
+          return false;
+      }
+
+      boolean this_present_writeBytes = true;
+      boolean that_present_writeBytes = true;
+      if (this_present_writeBytes || that_present_writeBytes) {
+        if (!(this_present_writeBytes && that_present_writeBytes))
+          return false;
+        if (this.writeBytes != that.writeBytes)
+          return false;
+      }
+
+      return true;
+    }
+
+    @Override
+    public int hashCode() {
+      return 0;
+    }
+
+    @Override
+    public int compareTo(updateBytesWritten_args other) {
+      if (!getClass().equals(other.getClass())) {
+        return getClass().getName().compareTo(other.getClass().getName());
+      }
+
+      int lastComparison = 0;
+
+      lastComparison = Boolean.valueOf(isSetBlockId()).compareTo(other.isSetBlockId());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetBlockId()) {
+        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.blockId, other.blockId);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
+      lastComparison = Boolean.valueOf(isSetWriteBytes()).compareTo(other.isSetWriteBytes());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetWriteBytes()) {
+        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.writeBytes, other.writeBytes);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
+      return 0;
+    }
+
+    public _Fields fieldForId(int fieldId) {
+      return _Fields.findByThriftId(fieldId);
+    }
+
+    public void read(org.apache.thrift.protocol.TProtocol iprot) throws org.apache.thrift.TException {
+      schemes.get(iprot.getScheme()).getScheme().read(iprot, this);
+    }
+
+    public void write(org.apache.thrift.protocol.TProtocol oprot) throws org.apache.thrift.TException {
+      schemes.get(oprot.getScheme()).getScheme().write(oprot, this);
+    }
+
+    @Override
+    public String toString() {
+      StringBuilder sb = new StringBuilder("updateBytesWritten_args(");
+      boolean first = true;
+
+      sb.append("blockId:");
+      sb.append(this.blockId);
+      first = false;
+      if (!first) sb.append(", ");
+      sb.append("writeBytes:");
+      sb.append(this.writeBytes);
+      first = false;
+      sb.append(")");
+      return sb.toString();
+    }
+
+    public void validate() throws org.apache.thrift.TException {
+      // check for required fields
+      // check for sub-struct validity
+    }
+
+    private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
+      try {
+        write(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(out)));
+      } catch (org.apache.thrift.TException te) {
+        throw new java.io.IOException(te);
+      }
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+      try {
+        // it doesn't seem like you should have to do this, but java serialization is wacky, and doesn't call the default constructor.
+        __isset_bitfield = 0;
+        read(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(in)));
+      } catch (org.apache.thrift.TException te) {
+        throw new java.io.IOException(te);
+      }
+    }
+
+    private static class updateBytesWritten_argsStandardSchemeFactory implements SchemeFactory {
+      public updateBytesWritten_argsStandardScheme getScheme() {
+        return new updateBytesWritten_argsStandardScheme();
+      }
+    }
+
+    private static class updateBytesWritten_argsStandardScheme extends StandardScheme<updateBytesWritten_args> {
+
+      public void read(org.apache.thrift.protocol.TProtocol iprot, updateBytesWritten_args struct) throws org.apache.thrift.TException {
+        org.apache.thrift.protocol.TField schemeField;
+        iprot.readStructBegin();
+        while (true)
+        {
+          schemeField = iprot.readFieldBegin();
+          if (schemeField.type == org.apache.thrift.protocol.TType.STOP) { 
+            break;
+          }
+          switch (schemeField.id) {
+            case 1: // BLOCK_ID
+              if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
+                struct.blockId = iprot.readI64();
+                struct.setBlockIdIsSet(true);
+              } else { 
+                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+              }
+              break;
+            case 2: // WRITE_BYTES
+              if (schemeField.type == org.apache.thrift.protocol.TType.I64) {
+                struct.writeBytes = iprot.readI64();
+                struct.setWriteBytesIsSet(true);
+              } else { 
+                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+              }
+              break;
+            default:
+              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+          }
+          iprot.readFieldEnd();
+        }
+        iprot.readStructEnd();
+
+        // check for required fields of primitive type, which can't be checked in the validate method
+        struct.validate();
+      }
+
+      public void write(org.apache.thrift.protocol.TProtocol oprot, updateBytesWritten_args struct) throws org.apache.thrift.TException {
+        struct.validate();
+
+        oprot.writeStructBegin(STRUCT_DESC);
+        oprot.writeFieldBegin(BLOCK_ID_FIELD_DESC);
+        oprot.writeI64(struct.blockId);
+        oprot.writeFieldEnd();
+        oprot.writeFieldBegin(WRITE_BYTES_FIELD_DESC);
+        oprot.writeI64(struct.writeBytes);
+        oprot.writeFieldEnd();
+        oprot.writeFieldStop();
+        oprot.writeStructEnd();
+      }
+
+    }
+
+    private static class updateBytesWritten_argsTupleSchemeFactory implements SchemeFactory {
+      public updateBytesWritten_argsTupleScheme getScheme() {
+        return new updateBytesWritten_argsTupleScheme();
+      }
+    }
+
+    private static class updateBytesWritten_argsTupleScheme extends TupleScheme<updateBytesWritten_args> {
+
+      @Override
+      public void write(org.apache.thrift.protocol.TProtocol prot, updateBytesWritten_args struct) throws org.apache.thrift.TException {
+        TTupleProtocol oprot = (TTupleProtocol) prot;
+        BitSet optionals = new BitSet();
+        if (struct.isSetBlockId()) {
+          optionals.set(0);
+        }
+        if (struct.isSetWriteBytes()) {
+          optionals.set(1);
+        }
+        oprot.writeBitSet(optionals, 2);
+        if (struct.isSetBlockId()) {
+          oprot.writeI64(struct.blockId);
+        }
+        if (struct.isSetWriteBytes()) {
+          oprot.writeI64(struct.writeBytes);
+        }
+      }
+
+      @Override
+      public void read(org.apache.thrift.protocol.TProtocol prot, updateBytesWritten_args struct) throws org.apache.thrift.TException {
+        TTupleProtocol iprot = (TTupleProtocol) prot;
+        BitSet incoming = iprot.readBitSet(2);
+        if (incoming.get(0)) {
+          struct.blockId = iprot.readI64();
+          struct.setBlockIdIsSet(true);
+        }
+        if (incoming.get(1)) {
+          struct.writeBytes = iprot.readI64();
+          struct.setWriteBytesIsSet(true);
+        }
+      }
+    }
+
+  }
+
+  public static class updateBytesWritten_result implements org.apache.thrift.TBase<updateBytesWritten_result, updateBytesWritten_result._Fields>, java.io.Serializable, Cloneable, Comparable<updateBytesWritten_result>   {
+    private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("updateBytesWritten_result");
+
+
+    private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
+    static {
+      schemes.put(StandardScheme.class, new updateBytesWritten_resultStandardSchemeFactory());
+      schemes.put(TupleScheme.class, new updateBytesWritten_resultTupleSchemeFactory());
+    }
+
+
+    /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
+    public enum _Fields implements org.apache.thrift.TFieldIdEnum {
+;
+
+      private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
+
+      static {
+        for (_Fields field : EnumSet.allOf(_Fields.class)) {
+          byName.put(field.getFieldName(), field);
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, or null if its not found.
+       */
+      public static _Fields findByThriftId(int fieldId) {
+        switch(fieldId) {
+          default:
+            return null;
+        }
+      }
+
+      /**
+       * Find the _Fields constant that matches fieldId, throwing an exception
+       * if it is not found.
+       */
+      public static _Fields findByThriftIdOrThrow(int fieldId) {
+        _Fields fields = findByThriftId(fieldId);
+        if (fields == null) throw new IllegalArgumentException("Field " + fieldId + " doesn't exist!");
+        return fields;
+      }
+
+      /**
+       * Find the _Fields constant that matches name, or null if its not found.
+       */
+      public static _Fields findByName(String name) {
+        return byName.get(name);
+      }
+
+      private final short _thriftId;
+      private final String _fieldName;
+
+      _Fields(short thriftId, String fieldName) {
+        _thriftId = thriftId;
+        _fieldName = fieldName;
+      }
+
+      public short getThriftFieldId() {
+        return _thriftId;
+      }
+
+      public String getFieldName() {
+        return _fieldName;
+      }
+    }
+    public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
+    static {
+      Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
+      metaDataMap = Collections.unmodifiableMap(tmpMap);
+      org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(updateBytesWritten_result.class, metaDataMap);
+    }
+
+    public updateBytesWritten_result() {
+    }
+
+    /**
+     * Performs a deep copy on <i>other</i>.
+     */
+    public updateBytesWritten_result(updateBytesWritten_result other) {
+    }
+
+    public updateBytesWritten_result deepCopy() {
+      return new updateBytesWritten_result(this);
+    }
+
+    @Override
+    public void clear() {
+    }
+
+    public void setFieldValue(_Fields field, Object value) {
+      switch (field) {
+      }
+    }
+
+    public Object getFieldValue(_Fields field) {
+      switch (field) {
+      }
+      throw new IllegalStateException();
+    }
+
+    /** Returns true if field corresponding to fieldID is set (has been assigned a value) and false otherwise */
+    public boolean isSet(_Fields field) {
+      if (field == null) {
+        throw new IllegalArgumentException();
+      }
+
+      switch (field) {
+      }
+      throw new IllegalStateException();
+    }
+
+    @Override
+    public boolean equals(Object that) {
+      if (that == null)
+        return false;
+      if (that instanceof updateBytesWritten_result)
+        return this.equals((updateBytesWritten_result)that);
+      return false;
+    }
+
+    public boolean equals(updateBytesWritten_result that) {
+      if (that == null)
+        return false;
+
+      return true;
+    }
+
+    @Override
+    public int hashCode() {
+      return 0;
+    }
+
+    @Override
+    public int compareTo(updateBytesWritten_result other) {
+      if (!getClass().equals(other.getClass())) {
+        return getClass().getName().compareTo(other.getClass().getName());
+      }
+
+      int lastComparison = 0;
+
+      return 0;
+    }
+
+    public _Fields fieldForId(int fieldId) {
+      return _Fields.findByThriftId(fieldId);
+    }
+
+    public void read(org.apache.thrift.protocol.TProtocol iprot) throws org.apache.thrift.TException {
+      schemes.get(iprot.getScheme()).getScheme().read(iprot, this);
+    }
+
+    public void write(org.apache.thrift.protocol.TProtocol oprot) throws org.apache.thrift.TException {
+      schemes.get(oprot.getScheme()).getScheme().write(oprot, this);
+      }
+
+    @Override
+    public String toString() {
+      StringBuilder sb = new StringBuilder("updateBytesWritten_result(");
+      boolean first = true;
+
+      sb.append(")");
+      return sb.toString();
+    }
+
+    public void validate() throws org.apache.thrift.TException {
+      // check for required fields
+      // check for sub-struct validity
+    }
+
+    private void writeObject(java.io.ObjectOutputStream out) throws java.io.IOException {
+      try {
+        write(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(out)));
+      } catch (org.apache.thrift.TException te) {
+        throw new java.io.IOException(te);
+      }
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
+      try {
+        read(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(in)));
+      } catch (org.apache.thrift.TException te) {
+        throw new java.io.IOException(te);
+      }
+    }
+
+    private static class updateBytesWritten_resultStandardSchemeFactory implements SchemeFactory {
+      public updateBytesWritten_resultStandardScheme getScheme() {
+        return new updateBytesWritten_resultStandardScheme();
+      }
+    }
+
+    private static class updateBytesWritten_resultStandardScheme extends StandardScheme<updateBytesWritten_result> {
+
+      public void read(org.apache.thrift.protocol.TProtocol iprot, updateBytesWritten_result struct) throws org.apache.thrift.TException {
+        org.apache.thrift.protocol.TField schemeField;
+        iprot.readStructBegin();
+        while (true)
+        {
+          schemeField = iprot.readFieldBegin();
+          if (schemeField.type == org.apache.thrift.protocol.TType.STOP) { 
+            break;
+          }
+          switch (schemeField.id) {
+            default:
+              org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+          }
+          iprot.readFieldEnd();
+        }
+        iprot.readStructEnd();
+
+        // check for required fields of primitive type, which can't be checked in the validate method
+        struct.validate();
+      }
+
+      public void write(org.apache.thrift.protocol.TProtocol oprot, updateBytesWritten_result struct) throws org.apache.thrift.TException {
+        struct.validate();
+
+        oprot.writeStructBegin(STRUCT_DESC);
+        oprot.writeFieldStop();
+        oprot.writeStructEnd();
+      }
+
+    }
+
+    private static class updateBytesWritten_resultTupleSchemeFactory implements SchemeFactory {
+      public updateBytesWritten_resultTupleScheme getScheme() {
+        return new updateBytesWritten_resultTupleScheme();
+      }
+    }
+
+    private static class updateBytesWritten_resultTupleScheme extends TupleScheme<updateBytesWritten_result> {
+
+      @Override
+      public void write(org.apache.thrift.protocol.TProtocol prot, updateBytesWritten_result struct) throws org.apache.thrift.TException {
+        TTupleProtocol oprot = (TTupleProtocol) prot;
+      }
+
+      @Override
+      public void read(org.apache.thrift.protocol.TProtocol prot, updateBytesWritten_result struct) throws org.apache.thrift.TException {
+        TTupleProtocol iprot = (TTupleProtocol) prot;
       }
     }
 
