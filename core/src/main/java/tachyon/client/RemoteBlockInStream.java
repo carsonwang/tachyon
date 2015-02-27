@@ -88,6 +88,16 @@ public class RemoteBlockInStream extends BlockInStream {
   private Object mUFSConf = null;
 
   /**
+   * The bytes read from remote.
+   */
+  private long mBytesReadRemote = 0;
+
+  /**
+   * The bytes read from UFS.
+   */
+  private long mBytesReadUfs = 0;
+
+  /**
    * The maximum number of tries to read a remote block. Since the stored ClientBlockInfo might not
    * be accurate when executing a remote read, we refresh it and retry reading a certain number of
    * times before giving up.
@@ -162,6 +172,9 @@ public class RemoteBlockInStream extends BlockInStream {
       mCheckpointInputStream.close();
     }
     mClosed = true;
+    if (mBytesReadRemote > 0 || mBytesReadUfs > 0) {
+      mTachyonFS.updateBytesRead(mFile.getBlockId(mBlockIndex), 0, mBytesReadRemote, mBytesReadUfs);
+    }
   }
 
   @Override
@@ -206,6 +219,8 @@ public class RemoteBlockInStream extends BlockInStream {
       bytesLeft -= bytesToRead;
       mBlockPos += bytesToRead;
     }
+    mBytesReadRemote += len - bytesLeft;
+
     if (bytesLeft > 0) {
       // We failed to read everything from mCurrentBuffer, so we need to stream the rest from the
       // underfs
@@ -228,6 +243,7 @@ public class RemoteBlockInStream extends BlockInStream {
         bytesLeft -= readBytes;
         mBlockPos += readBytes;
         mCheckpointPos += readBytes;
+        mBytesReadUfs += readBytes;
       }
     }
     return len;

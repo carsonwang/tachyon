@@ -992,7 +992,7 @@ public class TachyonFS extends AbstractTachyonFS {
    * @param ufsBytes The bytes read from under file system
    * @throws IOException
    */
-  public synchronized void updateBytesRead(long blockId, long localBytes, long remoteBytes,
+  synchronized void updateBytesRead(long blockId, long localBytes, long remoteBytes,
       long ufsBytes) throws IOException {
     if (mWorkerClient.isLocal()) {
       mWorkerClient.updateBytesRead(blockId, localBytes, remoteBytes, ufsBytes);
@@ -1006,7 +1006,7 @@ public class TachyonFS extends AbstractTachyonFS {
    * @param writeBytes The bytes written
    * @throws IOException
    */
-  public synchronized void updateBytesWritten(long blockId, long writeBytes) throws IOException {
+  synchronized void updateBytesWritten(long blockId, long writeBytes) throws IOException {
     if (mWorkerClient.isLocal()) {
       mWorkerClient.updateBytesWritten(blockId, writeBytes);
     }

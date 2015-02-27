@@ -160,6 +160,9 @@ public class BlockOutStream extends OutStream {
       mCloser.close();
       mTachyonFS.cacheBlock(mBlockId);
       mClosed = true;
+      if (mWrittenBytes > 0) {
+        mTachyonFS.updateBytesWritten(mBlockId, mWrittenBytes);
+      }
     }
   }
 
