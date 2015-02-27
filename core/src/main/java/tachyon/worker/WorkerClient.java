@@ -426,6 +426,45 @@ public class WorkerClient implements Closeable {
   }
 
   /**
+   * Update the client BytesRead metrics.
+   *
+   * @param blockId The id of the block
+   * @param localBytes The bytes read from local
+   * @param remoteBytes The bytes read from remote
+   * @param ufsBytes The bytes read from under file system
+   * @throws IOException
+   */
+  public synchronized void updateBytesRead(long blockId, long localBytes, long remoteBytes,
+      long ufsBytes) throws IOException {
+    mustConnect();
+
+    try {
+      mClient.updateBytesRead(blockId, localBytes, remoteBytes, ufsBytes);
+    } catch (TException e) {
+      mConnected = false;
+      throw new IOException(e);
+    }
+  }
+
+  /**
+   * Update the client BytesWritten metrics.
+   *
+   * @param blockId The id of the block
+   * @param writeBytes The bytes written
+   * @throws IOException
+   */
+  public synchronized void updateBytesWritten(long blockId, long writeBytes) throws IOException {
+    mustConnect();
+
+    try {
+      mClient.updateBytesWritten(blockId, writeBytes);
+    } catch (TException e) {
+      mConnected = false;
+      throw new IOException(e);
+    }
+  }
+
+  /**
    * Users' heartbeat to the Worker.
    * 
    * @param userId The id of the user

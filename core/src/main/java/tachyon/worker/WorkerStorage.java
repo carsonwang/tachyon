@@ -1019,6 +1019,39 @@ public class WorkerStorage {
   }
 
   /**
+   * Used to update the client BytesRead metrics.
+   *
+   * @param blockId The id of the block
+   * @param localBytes The bytes read from local
+   * @param remoteBytes The bytes read from remote
+   * @param ufsBytes The bytes read from under file system
+   */
+  public void updateBytesRead(long blockId, long localBytes, long remoteBytes, long ufsBytes) {
+    if (localBytes > 0) {
+      mWorkerSource.incBlocksReadLocal();
+      mWorkerSource.incBytesReadLocal(localBytes);
+    }
+    if (remoteBytes > 0) {
+      mWorkerSource.incBlocksReadRemote();
+      mWorkerSource.incBytesReadRemote(remoteBytes);
+    }
+    if (ufsBytes > 0) {
+      mWorkerSource.incBytesReadUfs(ufsBytes);
+    }
+  }
+
+  /**
+   * Used to update the client BytesWritten metrics.
+   *
+   * @param blockId The id of the block
+   * @param writeBytes The bytes written
+   */
+  public void updateBytesWritten(long blockId, long writeBytes) {
+    mWorkerSource.incBlocksWritten();
+    mWorkerSource.incBytesWritten(writeBytes);
+  }
+
+  /**
    * Handle the user's heartbeat.
    * 
    * @param userId The id of the user

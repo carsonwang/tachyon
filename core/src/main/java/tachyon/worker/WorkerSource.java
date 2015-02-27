@@ -36,6 +36,22 @@ public class WorkerSource implements Source {
           .name("BlocksEvicted"));
   private final Counter mBlocksPromoted = mMetricRegistry.counter(MetricRegistry
           .name("BlocksPromoted"));
+  // metrics from client
+  private final Counter mBlocksReadLocal = mMetricRegistry.counter(MetricRegistry
+          .name("BlocksReadLocal"));
+  private final Counter mBlocksReadRemote = mMetricRegistry.counter(MetricRegistry
+          .name("BlocksReadRemote"));
+  private final Counter mBlocksWritten = mMetricRegistry.counter(MetricRegistry
+          .name("BlocksWritten"));
+  private final Counter mBytesReadLocal = mMetricRegistry.counter(MetricRegistry
+          .name("BytesReadLocal"));
+  private final Counter mBytesReadRemote = mMetricRegistry.counter(MetricRegistry
+          .name("BytesReadRemote"));
+  private final Counter mBytesReadUfs = mMetricRegistry.counter(MetricRegistry
+          .name("BytesReadUfs"));
+  private final Counter mBytesWritten = mMetricRegistry.counter(MetricRegistry
+          .name("BytesWritten"));
+
 
   public WorkerSource(final WorkerStorage workerStorage) {
     mMetricRegistry.register(MetricRegistry.name("CapacityTotalGB"), new Gauge<Long>() {
@@ -97,5 +113,32 @@ public class WorkerSource implements Source {
     mBlocksPromoted.inc();
   }
 
+  public void incBlocksReadLocal() {
+    mBlocksReadLocal.inc();
+  }
+
+  public void incBlocksReadRemote() {
+    mBlocksReadRemote.inc();
+  }
+
+  public void incBlocksWritten() {
+    mBlocksWritten.inc();
+  }
+
+  public void incBytesReadLocal(long n) {
+    mBytesReadLocal.inc(n);
+  }
+
+  public void incBytesReadRemote(long n) {
+    mBytesReadRemote.inc(n);
+  }
+
+  public void incBytesReadUfs(long n) {
+    mBytesReadUfs.inc(n);
+  }
+
+  public void incBytesWritten(long n) {
+    mBytesWritten.inc(n);
+  }
 
 }

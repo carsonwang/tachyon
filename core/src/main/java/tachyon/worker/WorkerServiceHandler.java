@@ -116,6 +116,17 @@ public class WorkerServiceHandler implements WorkerService.Iface {
   }
 
   @Override
+  public void updateBytesRead(long blockId, long localBytes, long remoteBytes, long ufsBytes)
+      throws TException {
+    mWorkerStorage.updateBytesRead(blockId, localBytes, remoteBytes, ufsBytes);
+  }
+
+  @Override
+  public void updateBytesWritten(long blockId, long writeBytes) throws TException {
+    mWorkerStorage.updateBytesWritten(blockId, writeBytes);
+  }
+
+  @Override
   public void userHeartbeat(long userId) throws TException {
     mWorkerStorage.userHeartbeat(userId);
   }
