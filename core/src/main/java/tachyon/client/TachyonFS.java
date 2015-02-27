@@ -983,6 +983,35 @@ public class TachyonFS extends AbstractTachyonFS {
     return mWorkerClient.unlockBlock(blockId);
   }
 
+  /**
+   * Update the client BytesRead metrics.
+   *
+   * @param blockId The id of the block
+   * @param localBytes The bytes read from local
+   * @param remoteBytes The bytes read from remote
+   * @param ufsBytes The bytes read from under file system
+   * @throws IOException
+   */
+  public synchronized void updateBytesRead(long blockId, long localBytes, long remoteBytes,
+      long ufsBytes) throws IOException {
+    if (mWorkerClient.isLocal()) {
+      mWorkerClient.updateBytesRead(blockId, localBytes, remoteBytes, ufsBytes);
+    }
+  }
+
+  /**
+   * Update the client BytesWritten metrics.
+   *
+   * @param blockId The id of the block
+   * @param writeBytes The bytes written
+   * @throws IOException
+   */
+  public synchronized void updateBytesWritten(long blockId, long writeBytes) throws IOException {
+    if (mWorkerClient.isLocal()) {
+      mWorkerClient.updateBytesWritten(blockId, writeBytes);
+    }
+  }
+
   /** Alias for setPinned(fid, false). */
   public synchronized void unpinFile(int fid) throws IOException {
     setPinned(fid, false);
