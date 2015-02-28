@@ -49,28 +49,28 @@ public class MasterSource implements Source {
       .name("GetFileStatusOps"));
 
   public MasterSource(final MasterInfo masterInfo) {
-    mMetricRegistry.register(MetricRegistry.name("CapacityTotalGB"), new Gauge<Long>() {
+    mMetricRegistry.register(MetricRegistry.name("CapacityTotal"), new Gauge<Long>() {
       @Override
       public Long getValue() {
         return masterInfo.getCapacityBytes();
       }
     });
 
-    mMetricRegistry.register(MetricRegistry.name("CapacityUsedGB"), new Gauge<Long>() {
+    mMetricRegistry.register(MetricRegistry.name("CapacityUsed"), new Gauge<Long>() {
       @Override
       public Long getValue() {
         return masterInfo.getUsedBytes();
       }
     });
 
-    mMetricRegistry.register(MetricRegistry.name("CapacityFreeGB"), new Gauge<Long>() {
+    mMetricRegistry.register(MetricRegistry.name("CapacityFree"), new Gauge<Long>() {
       @Override
       public Long getValue() {
         return masterInfo.getCapacityBytes() - masterInfo.getUsedBytes();
       }
     });
 
-    mMetricRegistry.register(MetricRegistry.name("UnderFsCapacityTotalGB"), new Gauge<Long>() {
+    mMetricRegistry.register(MetricRegistry.name("UnderFsCapacityTotal"), new Gauge<Long>() {
       @Override
       public Long getValue() {
         long ret = 0L;
@@ -83,7 +83,7 @@ public class MasterSource implements Source {
       }
     });
 
-    mMetricRegistry.register(MetricRegistry.name("UnderFsCapacityUsedGB"), new Gauge<Long>() {
+    mMetricRegistry.register(MetricRegistry.name("UnderFsCapacityUsed"), new Gauge<Long>() {
       @Override
       public Long getValue() {
         long ret = 0L;
@@ -96,7 +96,7 @@ public class MasterSource implements Source {
       }
     });
 
-    mMetricRegistry.register(MetricRegistry.name("UnderFsCapacityFreeGB"), new Gauge<Long>() {
+    mMetricRegistry.register(MetricRegistry.name("UnderFsCapacityFree"), new Gauge<Long>() {
       @Override
       public Long getValue() {
         long ret = 0L;
