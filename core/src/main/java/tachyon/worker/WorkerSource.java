@@ -38,21 +38,21 @@ public class WorkerSource implements Source {
           .name("BlocksPromoted"));
 
   public WorkerSource(final WorkerStorage workerStorage) {
-    mMetricRegistry.register(MetricRegistry.name("CapacityTotalGB"), new Gauge<Long>() {
+    mMetricRegistry.register(MetricRegistry.name("CapacityTotal"), new Gauge<Long>() {
       @Override
       public Long getValue() {
         return workerStorage.getCapacityBytes();
       }
     });
 
-    mMetricRegistry.register(MetricRegistry.name("CapacityUsedGB"), new Gauge<Long>() {
+    mMetricRegistry.register(MetricRegistry.name("CapacityUsed"), new Gauge<Long>() {
       @Override
       public Long getValue() {
         return workerStorage.getUsedBytes();
       }
     });
 
-    mMetricRegistry.register(MetricRegistry.name("CapacityFreeGB"), new Gauge<Long>() {
+    mMetricRegistry.register(MetricRegistry.name("CapacityFree"), new Gauge<Long>() {
       @Override
       public Long getValue() {
         return workerStorage.getCapacityBytes() - workerStorage.getUsedBytes();
